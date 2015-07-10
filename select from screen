@@ -1,0 +1,2198 @@
+.版本 2
+.支持库 iext
+.支持库 eDB
+.支持库 spec
+.支持库 EThread
+.支持库 eAPI
+.支持库 shell
+
+.程序集 窗口程序集1
+.程序集变量 鼠标钩子句柄, 整数型
+.程序集变量 鼠标位置, POINTAPI
+.程序集变量 bok, 整数型
+.程序集变量 A, 文本型
+.程序集变量 划词分割变量, 文本型, , "0", 如果 出现错误(10044): 不能将“文本型 数组”数据转换到“文本型”数据 把这里的数组项填上 0
+.程序集变量 sector, 文本型
+.程序集变量 sector2, 文本型, , , 用来储存sector 颠倒后的结果
+.程序集变量 carrier, 文本型
+.程序集变量 class, 文本型
+.程序集变量 data, 文本型
+.程序集变量 数组数量, 整数型
+.程序集变量 数组数量标签, 文本型
+.程序集变量 sql语句, 文本型
+.程序集变量 sText, 文本型
+.程序集变量 price, 文本型
+.程序集变量 searchmethod, 整数型
+.程序集变量 YRYQ, 整数型
+.程序集变量 yryqp, 文本型
+.程序集变量 CHD, 文本型
+.程序集变量 INF, 文本型
+.程序集变量 addon, 整数型
+.程序集变量 REMARK, 逻辑型
+
+.子程序 __启动窗口_创建完毕
+
+载入 (窗口1, _启动窗口, 假)
+载入 (窗口2, _启动窗口, 假)
+' _启动窗口.底图 ＝ #SNOW1
+_时钟1_周期事件 ()
+按钮1CHD.可视 ＝ 假
+窗口1.透明标签1INF.可视 ＝ 假
+窗口1.透明标签1chd.可视 ＝ 假
+按钮1INF.可视 ＝ 假
+按钮2yryq.可视 ＝ 假
+组合框YEAR.可视 ＝ 假
+透明标签1codeshare.标题 ＝ “”
+透明标签rbdcheck.可视 ＝ 假
+
+.子程序 _选择框1_被单击
+.局部变量 currency1, 文本型
+.局部变量 ondate, 文本型
+.局部变量 until, 文本型
+.局部变量 NetorGross, 文本型
+.局部变量 ApplicableRoute, 文本型
+.局部变量 超级编辑框读入文档路径, 文本型
+.局部变量 超级编辑框读入文档路径2, 字节集
+
+.如果 (选择框1.选中 ＝ 真)
+    选择框1.背景颜色 ＝ #绿色
+    选择框1.标题 ＝ “ON”
+    选择框1.文本颜色 ＝ #绿色
+    鼠标钩子句柄 ＝ API_SetWindowsHookEx (14, &鼠标钩子处理, API_GetModuleHandle (0), 0)  ' 安装鼠标钩子
+    输出调试文本 (鼠标钩子句柄)
+    .判断开始 (数据库连接1.连接Access (透明标签2数据库地址.标题, “”) ＝ 真)
+        调试输出 (数据库连接1.连接Access (透明标签2数据库地址.标题, “”))  ' 数据库连接 返回值为:[真/假] [真]表示连接成功
+        ' 读入文件 ()
+        记录集1.置连接 (数据库连接1)
+        记录集1.打开 (“select * from ini ”, #SQL语句, )
+        记录集1.到首记录 ()
+        记录集1.读整数 (“searchme”, searchmethod)
+        记录集1.读文本 (“applic”, ApplicableRoute)
+        记录集1.读文本 (“currency”, currency1)
+        记录集1.读文本 (“ondate”, ondate)
+        记录集1.读文本 (“Until”, until)
+        记录集1.读文本 (“NG”, NetorGross)
+        记录集1.读文本 (“CHD”, CHD)
+        记录集1.读文本 (“INF”, INF)
+        记录集1.读整数 (“yryq”, YRYQ)
+        记录集1.读整数 (“addon”, addon)
+        透明标签ADDON.标题 ＝ 到文本 (addon)
+        透明标签8applic.标题 ＝ ApplicableRoute
+        透明标签8m.标题 ＝ 到文本 (searchmethod)
+        透明标签7.标题 ＝ currency1
+        透明标签8ng.标题 ＝ NetorGross
+        透明标签onafter.标题 ＝ “On/After:  ” ＋ ondate
+        透明标签until.标题 ＝ “Until:         ” ＋ until
+        记录集1.关闭 ()
+        .判断开始 (YRYQ ＝ 1)
+            按钮2yryq.可视 ＝ 真
+
+        .默认
+            按钮2yryq.可视 ＝ 假
+
+        .判断结束
+
+
+
+    .默认
+        信息框 (“opps...:” ＋ 数据库连接1.最后错误, #错误图标, “opps...:”)
+        返回 ()
+    .判断结束
+
+    _启动窗口.总在最前 ＝ 真
+.否则
+    选择框1.选中 ＝ 假
+    选择框1.背景颜色 ＝ #红色
+    选择框1.标题 ＝ “OFF”
+    选择框1.文本颜色 ＝ #红色
+    API_UnhookWindowsHookEx (鼠标钩子句柄)
+    _启动窗口.总在最前 ＝ 假
+.如果结束
+
+
+.子程序 鼠标钩子处理, 整数型
+.参数 icode, 整数型
+.参数 wparam, 整数型
+.参数 lparam, 整数型
+.局部变量 临时鼠标位置, POINTAPI
+
+.判断开始 (wparam ＝ 513)  ' 鼠标按下消息，声明常量有点麻烦，在此偷懒一下
+    API_GetCursorPos (鼠标位置)
+.判断 (wparam ＝ 514)  ' 鼠标放开消息，声明常量有点麻烦，在此偷懒一下
+    API_GetCursorPos (临时鼠标位置)
+    .如果真 (鼠标位置.x ≠ 临时鼠标位置.x 或 鼠标位置.y ≠ 临时鼠标位置.y)
+        启动线程 (&取词, , )
+    .如果真结束
+
+.默认
+
+.判断结束
+
+返回 (API_CallNextHookEx (鼠标钩子句柄, icode, wparam, lparam))
+
+.子程序 取词
+.局部变量 剪切板暂存文本, 文本型
+.局部变量 剪切板暂存图片, 字节集
+.局部变量 数据类型, 整数型, , , 1.文本 2.图片
+.局部变量 price1, 文本型
+.局部变量 currency, 文本型
+.局部变量 netorgross, 文本型
+.局部变量 fp, 文本型
+.局部变量 sector内容, 文本型
+.局部变量 I, 整数型
+.局部变量 carrier内容, 文本型
+.局部变量 newrbd, 文本型
+.局部变量 N, 整数型
+.局部变量 N8, 整数型
+.局部变量 编辑框8后五位, 文本型
+.局部变量 currency1, 文本型
+.局部变量 ondate, 文本型
+.局部变量 until, 文本型
+.局部变量 NetorGross, 文本型
+.局部变量 ApplicableRoute, 文本型
+.局部变量 newdate, 整数型, , , 新日期到整数
+.局部变量 hl, 文本型, , , HighLow season 标记变量
+.局部变量 Newmth, 文本型, , , 储存重新整理后的年月日 yyyymmdd
+
+
+延时 (100)
+.如果 (取剪辑板文本 () ≠ “”)  ' 备份剪切板数据
+    剪切板暂存文本 ＝ 取剪辑板文本 ()
+    数据类型 ＝ #CF_TEXT
+.否则
+
+    ' 剪切板暂存图片 ＝ 从剪贴板取位图 ()
+    ' 数据类型 ＝ #CF_BITMAP
+.如果结束
+
+
+' 取词
+模拟按键 (#Ctrl键, #C键, )
+延时 (100)
+sText ＝ 取剪辑板文本 ()
+' 取词结束
+A ＝ sText
+调试输出 (A)
+划词分割变量 ＝ 分割文本 (A, “ ”, )
+数组数量 ＝ 取数组成员数 (划词分割变量)
+数组数量标签 ＝ 到文本 (数组数量)
+透明标签0.标题 ＝ 数组数量标签
+按钮1CHD.可视 ＝ 假
+按钮1INF.可视 ＝ 假
+窗口1.透明标签1chd.可视 ＝ 假
+窗口1.透明标签1INF.可视 ＝ 假
+透明标签8N2G2N.标题 ＝ “”
+' 窗口1.透明标签8N2G2N.标题 ＝ “”
+.如果 (数组数量 ＜ 15)
+    透明标签7spaPRICE.字体.字体名称 ＝ “Calibri”
+    透明标签7spaPRICE.字体.字体大小 ＝ 15
+    透明标签7spaPRICE.标题 ＝ “Seclected  too short”
+.否则
+    编辑框1.内容 ＝ 划词分割变量 [1]
+    .循环判断首 ()
+        N ＝ 寻找文本 (编辑框1.内容, #换行符, , 假)
+        编辑框1.内容 ＝ 子文本替换 (编辑框1.内容, #换行符, “”, N, , 真)  ' 这部分是用来 删除如果是两张票 全选产生的换行符导致sector2 后半部分取不上后两个字母
+    .循环判断尾 (N ≠ -1)
+    编辑框1.内容 ＝ 删全部空 (编辑框1.内容)
+    调试输出 (编辑框1.内容)
+    透明标签7spaPRICE.标题 ＝ “”
+    调试输出 (划词分割变量 [8])  ' data
+    调试输出 (划词分割变量 [10])  ' time
+    调试输出 (划词分割变量 [12])  ' statu
+    调试输出 (划词分割变量 [14])  ' farebasis
+    调试输出 (划词分割变量 [15])  ' 如果出现【空格】+/CH 话单取 变量14 取不到孩子部分 所以延伸到了15 同时删除空格 下边就不用改了
+    编辑框3.内容 ＝ 到文本 (划词分割变量 [3]) ＋ “   ” ＋ 到文本 (划词分割变量 [4])
+    编辑框4class.内容 ＝ 到文本 (划词分割变量 [6])
+    编辑框6TIME.内容 ＝ 到文本 (划词分割变量 [10])
+    编辑框5data.内容 ＝ 到文本 (划词分割变量 [8])
+    编辑框7statu.内容 ＝ 到文本 (划词分割变量 [12])
+    编辑框8.内容 ＝ 到文本 (划词分割变量 [14]) ＋ 划词分割变量 [15]
+
+    CHDINFSEARCH ()
+
+
+    sector ＝ 到文本 (编辑框1.内容)
+    调试输出 (sector)
+    调试输出 (取文本长度 (编辑框1.内容))
+    调试输出 (删全部空 (编辑框1.内容))
+    调试输出 (取文本长度 (编辑框1.内容))
+    carrier ＝ 到文本 (划词分割变量 [3])
+    class ＝ 到文本 (划词分割变量 [6])
+    sector2 ＝ 取文本右边 (sector, 3) ＋ 取文本左边 (sector, 3)
+    透明标签7spaPRICE.标题 ＝ “”
+    窗口1.透明标签7spaPRICE.标题 ＝ “”
+    调试输出 (searchmethod)
+    .判断开始 (searchmethod ＝ 1)
+        透明标签rbdcheck.可视 ＝ 假
+        组合框YEAR.可视 ＝ 假
+        记录集1.关闭 ()
+        记录集1.置连接 (数据库连接1)
+        记录集1.打开 (“select cs from spa where cs=” ＋ “'” ＋ carrier ＋ “'”, #SQL语句, )
+        .判断开始 (记录集1.记录数量 ＞ 0)
+            记录集1.关闭 ()
+            透明标签1codeshare.标题 ＝ “”
+
+            记录集1.置连接 (数据库连接1)
+            记录集1.打开 (“select * from ini where sheetname='spa'”, #SQL语句, )
+            记录集1.读逻辑值 (“REMARK”, REMARK)
+            .如果真 (REMARK ＝ 真)
+                记录集1.读文本 (“currency”, currency1)
+                记录集1.读文本 (“ondate”, ondate)
+                记录集1.读文本 (“Until”, until)
+                记录集1.读文本 (“NG”, netorgross)
+                记录集1.读文本 (“CHD”, CHD)
+                记录集1.读文本 (“INF”, INF)
+                记录集1.读整数 (“yryq”, YRYQ)
+                记录集1.读整数 (“addon”, addon)
+                透明标签ADDON.标题 ＝ 到文本 (addon)
+                记录集1.读文本 (“applic”, ApplicableRoute)
+                透明标签8applic.标题 ＝ “”
+                透明标签8applic.标题 ＝ ApplicableRoute
+                透明标签8ng.标题 ＝ netorgross
+                透明标签7.标题 ＝ currency1
+                ' 窗口1.透明标签7.标题 ＝ currency1
+                透明标签onafter.标题 ＝ “On/After:  ” ＋ ondate
+                透明标签until.标题 ＝ “Until:         ” ＋ until
+                CHDINFSEARCH ()
+                .判断开始 (YRYQ ＝ 1)
+                    按钮2yryq.可视 ＝ 真
+
+                .默认
+                    按钮2yryq.可视 ＝ 假
+                .判断结束
+
+            .如果真结束
+
+
+
+            记录集1.关闭 ()
+
+            记录集1.置连接 (数据库连接1)
+            记录集1.打开 (“SELECT * FROM spa where sectors=” ＋ “'” ＋ sector ＋ “'” ＋ “or sectors=” ＋ “'” ＋ sector2 ＋ “'”, #SQL语句, )
+            .判断开始 (记录集1.记录数量 ＞ 0)
+                记录集1.到首记录 ()
+                记录集1.读文本 (class, price)
+                调试输出 (记录集1.记录数量)
+                透明标签7spaPRICE.字体.字体名称 ＝ “Calibri”
+                透明标签7spaPRICE.字体.字体大小 ＝ 18
+                透明标签7spaPRICE.标题 ＝ “” ＋ 到文本 (四舍五入 (到数值 (price) ÷ 到数值 (编辑框2.内容), 2))
+
+                窗口1.透明标签7spaPRICE.字体.字体名称 ＝ “Comic Sans MS”
+                窗口1.透明标签7spaPRICE.字体.字体大小 ＝ 22
+                窗口1.透明标签7spaPRICE.标题 ＝ “” ＋ 到文本 (四舍五入 (到数值 (price) ÷ 到数值 (编辑框2.内容), 2))
+
+
+
+            .默认
+                errormessage ()
+
+            .判断结束
+
+
+        .默认
+            记录集1.关闭 ()
+            记录集1.置连接 (数据库连接1)
+            记录集1.打开 (“select cs from classmap where cs=” ＋ “'” ＋ carrier ＋ “'”, #SQL语句, )
+            .判断开始 (记录集1.记录数量 ＞ 0)
+                记录集1.关闭 ()
+                记录集1.置连接 (数据库连接1)
+                记录集1.打开 (“select SPARBD from classmap where TicketRBD=” ＋ “'” ＋ class ＋ “'”, #SQL语句, )
+                记录集1.到首记录 ()
+                记录集1.读文本 (“SPARBD”, newrbd)
+                透明标签1codeshare.标题 ＝ “SPA RBD:” ＋ 到文本 (newrbd)
+                记录集1.关闭 ()
+                记录集1.置连接 (数据库连接1)
+                记录集1.打开 (“SELECT * FROM spa where sectors=” ＋ “'” ＋ sector ＋ “'” ＋ “or sectors=” ＋ “'” ＋ sector2 ＋ “'”, #SQL语句, )
+                .判断开始 (记录集1.记录数量 ＞ 0)
+                    记录集1.到首记录 ()
+                    记录集1.读文本 (newrbd, price)
+                    调试输出 (记录集1.记录数量)
+                    透明标签7spaPRICE.字体.字体名称 ＝ “Calibri”
+                    透明标签7spaPRICE.字体.字体大小 ＝ 18
+                    透明标签7spaPRICE.标题 ＝ “” ＋ 到文本 (四舍五入 (到数值 (price) ÷ 到数值 (编辑框2.内容), 2))
+
+                    窗口1.透明标签7spaPRICE.字体.字体名称 ＝ “Comic Sans MS”
+                    窗口1.透明标签7spaPRICE.字体.字体大小 ＝ 22
+                    窗口1.透明标签7spaPRICE.标题 ＝ “” ＋ 到文本 (四舍五入 (到数值 (price) ÷ 到数值 (编辑框2.内容), 2))
+
+
+                .默认
+                    errormessage ()
+                .判断结束
+
+
+            .默认
+                errormessage ()
+
+            .判断结束
+
+
+        .判断结束
+
+
+
+    .判断 (searchmethod ＝ 2)
+        透明标签rbdcheck.可视 ＝ 假
+        组合框YEAR.可视 ＝ 假
+        记录集1.关闭 ()
+        记录集1.置连接 (数据库连接1)
+        记录集1.打开 (“select cs from spa where cs=” ＋ “'” ＋ carrier ＋ “'”, #SQL语句, )
+        .判断开始 (记录集1.记录数量 ＞ 0)
+            记录集1.关闭 ()
+            透明标签1codeshare.标题 ＝ “”
+
+            记录集1.置连接 (数据库连接1)
+            记录集1.打开 (“select * from ini where sheetname='spa'”, #SQL语句, )
+            记录集1.读逻辑值 (“REMARK”, REMARK)
+            .如果真 (REMARK ＝ 真)
+                记录集1.读文本 (“currency”, currency1)
+                记录集1.读文本 (“ondate”, ondate)
+                记录集1.读文本 (“Until”, until)
+                记录集1.读文本 (“NG”, netorgross)
+                记录集1.读文本 (“CHD”, CHD)
+                记录集1.读文本 (“INF”, INF)
+                记录集1.读整数 (“yryq”, YRYQ)
+                记录集1.读整数 (“addon”, addon)
+                透明标签ADDON.标题 ＝ 到文本 (addon)
+                透明标签8ng.标题 ＝ netorgross
+                透明标签7.标题 ＝ currency1
+                透明标签8applic.标题 ＝ “”
+                记录集1.读文本 (“applic”, ApplicableRoute)
+                透明标签8applic.标题 ＝ ApplicableRoute
+                ' 窗口1.透明标签7.标题 ＝ currency1
+                透明标签onafter.标题 ＝ “On/After:  ” ＋ ondate
+                透明标签until.标题 ＝ “Until:         ” ＋ until
+                CHDINFSEARCH ()
+                .判断开始 (YRYQ ＝ 1)
+                    按钮2yryq.可视 ＝ 真
+
+                .默认
+                    按钮2yryq.可视 ＝ 假
+                .判断结束
+
+            .如果真结束
+
+            透明标签1codeshare.标题 ＝ “”
+            记录集1.关闭 ()
+
+            记录集1.置连接 (数据库连接1)
+            记录集1.打开 (“SELECT * FROM spa where sectors=” ＋ “'” ＋ sector ＋ “'” ＋ “or sectors=” ＋ “'” ＋ sector2 ＋ “'”, #SQL语句, )
+            .判断开始 (记录集1.记录数量 ＞ 0)
+                记录集1.到首记录 ()
+                记录集1.读文本 (class, price)
+                调试输出 (记录集1.记录数量)
+                透明标签7spaPRICE.字体.字体名称 ＝ “Calibri”
+                透明标签7spaPRICE.字体.字体大小 ＝ 18
+                透明标签7spaPRICE.标题 ＝ “” ＋ 到文本 (四舍五入 (到数值 (price) ÷ 到数值 (编辑框2.内容), 2))
+
+                窗口1.透明标签7spaPRICE.字体.字体名称 ＝ “Comic Sans MS”
+                窗口1.透明标签7spaPRICE.字体.字体大小 ＝ 22
+                窗口1.透明标签7spaPRICE.标题 ＝ “” ＋ 到文本 (四舍五入 (到数值 (price) ÷ 到数值 (编辑框2.内容), 2))
+
+
+            .判断 (addon ＝ 1)
+
+                price ＝ addon1SPA ()
+                透明标签7spaPRICE.字体.字体名称 ＝ “Calibri”
+                透明标签7spaPRICE.字体.字体大小 ＝ 18
+                透明标签7spaPRICE.标题 ＝ “” ＋ 到文本 (price)
+
+                窗口1.透明标签7spaPRICE.字体.字体名称 ＝ “Comic Sans MS”
+                窗口1.透明标签7spaPRICE.字体.字体大小 ＝ 22
+                窗口1.透明标签7spaPRICE.标题 ＝ “” ＋ 到文本 (price)
+
+
+
+            .判断 (addon ＝ 2)
+                price ＝ addon2SPA ()
+                透明标签7spaPRICE.字体.字体名称 ＝ “Calibri”
+                透明标签7spaPRICE.字体.字体大小 ＝ 18
+                透明标签7spaPRICE.标题 ＝ “” ＋ 到文本 (四舍五入 (到数值 (price) ÷ 到数值 (编辑框2.内容), 2))
+
+                窗口1.透明标签7spaPRICE.字体.字体名称 ＝ “Comic Sans MS”
+                窗口1.透明标签7spaPRICE.字体.字体大小 ＝ 22
+                窗口1.透明标签7spaPRICE.标题 ＝ “” ＋ 到文本 (四舍五入 (到数值 (price) ÷ 到数值 (编辑框2.内容), 2))
+
+
+            .判断 (addon ＝ 3)
+                addon3SPA ()
+
+            .默认
+                errormessage ()
+
+            .判断结束
+
+
+        .默认
+            记录集1.关闭 ()
+            记录集1.置连接 (数据库连接1)
+            记录集1.打开 (“select cs from codeshare where cs=” ＋ “'” ＋ carrier ＋ “'”, #SQL语句, )
+            .判断开始 (记录集1.记录数量 ＞ 0)
+                记录集1.关闭 ()
+                透明标签1codeshare.标题 ＝ “”
+
+                记录集1.置连接 (数据库连接1)
+                记录集1.打开 (“select * from ini where sheetname='codeshare'”, #SQL语句, )
+                记录集1.读逻辑值 (“REMARK”, REMARK)
+                .如果真 (REMARK ＝ 真)
+                    记录集1.读文本 (“currency”, currency1)
+                    记录集1.读文本 (“ondate”, ondate)
+                    记录集1.读文本 (“Until”, until)
+                    记录集1.读文本 (“NG”, netorgross)
+                    记录集1.读文本 (“CHD”, CHD)
+                    记录集1.读文本 (“INF”, INF)
+                    记录集1.读整数 (“yryq”, YRYQ)
+                    透明标签8ng.标题 ＝ netorgross
+                    透明标签7.标题 ＝ currency1
+                    透明标签8applic.标题 ＝ “”
+                    ' 窗口1.透明标签7.标题 ＝ currency1
+                    记录集1.读整数 (“addon”, addon)
+                    透明标签ADDON.标题 ＝ 到文本 (addon)
+                    记录集1.读文本 (“applic”, ApplicableRoute)
+                    透明标签8applic.标题 ＝ ApplicableRoute
+                    透明标签onafter.标题 ＝ “On/After:  ” ＋ ondate
+                    透明标签until.标题 ＝ “Until:         ” ＋ until
+                    CHDINFSEARCH ()
+                    .判断开始 (YRYQ ＝ 1)
+                        按钮2yryq.可视 ＝ 真
+
+                    .默认
+                        按钮2yryq.可视 ＝ 假
+                    .判断结束
+
+                .如果真结束
+
+                记录集1.关闭 ()
+
+                记录集1.置连接 (数据库连接1)
+                记录集1.打开 (“SELECT * FROM codeshare where sectors=” ＋ “'” ＋ sector ＋ “'” ＋ “or sectors=” ＋ “'” ＋ sector2 ＋ “'”, #SQL语句, )
+                .判断开始 (记录集1.记录数量 ＞ 0)
+                    记录集1.到首记录 ()
+                    记录集1.读文本 (class, price)
+                    调试输出 (记录集1.记录数量)
+                    透明标签7spaPRICE.字体.字体名称 ＝ “Calibri”
+                    透明标签7spaPRICE.字体.字体大小 ＝ 18
+                    透明标签7spaPRICE.标题 ＝ “” ＋ 到文本 (四舍五入 (到数值 (price) ÷ 到数值 (编辑框2.内容), 2))
+
+                    窗口1.透明标签7spaPRICE.字体.字体名称 ＝ “Comic Sans MS”
+                    窗口1.透明标签7spaPRICE.字体.字体大小 ＝ 22
+                    窗口1.透明标签7spaPRICE.标题 ＝ “” ＋ 到文本 (四舍五入 (到数值 (price) ÷ 到数值 (编辑框2.内容), 2))
+
+
+                .判断 (addon ＝ 1)
+
+                    price ＝ addon1CODESHARE ()
+                    透明标签7spaPRICE.字体.字体名称 ＝ “Calibri”
+                    透明标签7spaPRICE.字体.字体大小 ＝ 18
+                    透明标签7spaPRICE.标题 ＝ “” ＋ 到文本 (price)
+
+                    窗口1.透明标签7spaPRICE.字体.字体名称 ＝ “Comic Sans MS”
+                    窗口1.透明标签7spaPRICE.字体.字体大小 ＝ 22
+                    窗口1.透明标签7spaPRICE.标题 ＝ “” ＋ 到文本 (price)
+
+
+
+                .判断 (addon ＝ 2)
+                    组合框YEAR.可视 ＝ 真
+                    price ＝ addon2CODESHARE ()
+                    透明标签7spaPRICE.字体.字体名称 ＝ “Calibri”
+                    透明标签7spaPRICE.字体.字体大小 ＝ 18
+                    透明标签7spaPRICE.标题 ＝ “” ＋ 到文本 (四舍五入 (到数值 (price) ÷ 到数值 (编辑框2.内容), 2))
+
+                    窗口1.透明标签7spaPRICE.字体.字体名称 ＝ “Comic Sans MS”
+                    窗口1.透明标签7spaPRICE.字体.字体大小 ＝ 22
+                    窗口1.透明标签7spaPRICE.标题 ＝ “” ＋ 到文本 (四舍五入 (到数值 (price) ÷ 到数值 (编辑框2.内容), 2))
+
+
+                .判断 (addon ＝ 3)
+                    addon3CODESHARE ()
+
+                .默认
+                    errormessage ()
+
+                    ' 记录集1.关闭 ()
+                    ' 记录集1.置连接 (数据库连接1)
+                    ' 记录集1.打开 (“SELECT * FROM codeshare where sectors=” ＋ “'” ＋ sector2 ＋ “'”, #SQL语句, )
+                    ' 记录集1.到首记录 ()
+                    ' 记录集1.读文本 (class, price)
+                .判断结束
+
+
+            .默认
+                errormessage ()
+            .判断结束
+
+
+        .判断结束
+
+
+
+
+
+
+
+    .判断 (searchmethod ＝ 3)
+        透明标签rbdcheck.可视 ＝ 假
+        组合框YEAR.可视 ＝ 真
+        记录集1.关闭 ()
+        记录集1.置连接 (数据库连接1)
+        记录集1.打开 (“select cs from spa where cs=” ＋ “'” ＋ carrier ＋ “'”, #SQL语句, )
+        .判断开始 (记录集1.记录数量 ＞ 0)
+            记录集1.关闭 ()
+            透明标签1codeshare.标题 ＝ “”
+
+            newdate ＝ 编辑框5日期转换 ()
+            记录集1.置连接 (数据库连接1)
+            记录集1.打开 (“SELECT hl FROM hlspa where datestart<=” ＋ 到文本 (newdate) ＋ “and dateend>=” ＋ 到文本 (newdate), #SQL语句, )  ' 数字型变量 要先改为到文本（）才能用
+            记录集1.到首记录 ()
+            记录集1.读文本 (“hl”, hl)
+            透明标签1codeshare.标题 ＝ hl ＋ “ Season”
+            调试输出 (hl)
+
+            记录集1.置连接 (数据库连接1)
+            记录集1.打开 (“select * from ini where sheetname='spa'”, #SQL语句, )
+            记录集1.读逻辑值 (“REMARK”, REMARK)
+            .如果真 (REMARK ＝ 真)
+                记录集1.读文本 (“currency”, currency1)
+                记录集1.读文本 (“ondate”, ondate)
+                记录集1.读文本 (“Until”, until)
+                记录集1.读文本 (“NG”, netorgross)
+                记录集1.读文本 (“CHD”, CHD)
+                记录集1.读文本 (“INF”, INF)
+                记录集1.读整数 (“yryq”, YRYQ)
+                透明标签8ng.标题 ＝ netorgross
+                透明标签7.标题 ＝ currency1
+                记录集1.读文本 (“applic”, ApplicableRoute)
+                透明标签8applic.标题 ＝ “”
+                透明标签8applic.标题 ＝ ApplicableRoute
+                记录集1.读整数 (“addon”, addon)
+                透明标签ADDON.标题 ＝ 到文本 (addon)
+                ' 窗口1.透明标签7.标题 ＝ currency1
+                透明标签onafter.标题 ＝ “On/After:  ” ＋ ondate
+                透明标签until.标题 ＝ “Until:         ” ＋ until
+                CHDINFSEARCH ()
+                .判断开始 (YRYQ ＝ 1)
+                    按钮2yryq.可视 ＝ 真
+
+                .默认
+                    按钮2yryq.可视 ＝ 假
+                .判断结束
+
+            .如果真结束
+
+
+            记录集1.关闭 ()
+
+
+            记录集1.置连接 (数据库连接1)
+            记录集1.打开 (“SELECT * FROM spa where sectors=” ＋ “'” ＋ sector ＋ “'” ＋ “and hl=” ＋ “'” ＋ hl ＋ “'”, #SQL语句, )
+            .判断开始 (记录集1.记录数量 ＞ 0)
+                记录集1.到首记录 ()
+                记录集1.读文本 (class, price)
+
+            .默认
+                记录集1.关闭 ()
+                记录集1.置连接 (数据库连接1)
+                记录集1.打开 (“SELECT * FROM spa where sectors=” ＋ “'” ＋ sector2 ＋ “'” ＋ “and hl=” ＋ “'” ＋ hl ＋ “'”, #SQL语句, )
+                记录集1.到首记录 ()
+                记录集1.读文本 (class, price)
+
+            .判断结束
+            调试输出 (记录集1.记录数量)
+            透明标签7spaPRICE.字体.字体名称 ＝ “Calibri”
+            透明标签7spaPRICE.字体.字体大小 ＝ 18
+            透明标签7spaPRICE.标题 ＝ “” ＋ 到文本 (四舍五入 (到数值 (price) ÷ 到数值 (编辑框2.内容), 2))
+
+            窗口1.透明标签7spaPRICE.字体.字体名称 ＝ “Comic Sans MS”
+            窗口1.透明标签7spaPRICE.字体.字体大小 ＝ 22
+            窗口1.透明标签7spaPRICE.标题 ＝ “” ＋ 到文本 (四舍五入 (到数值 (price) ÷ 到数值 (编辑框2.内容), 2))
+
+
+        .默认
+            记录集1.关闭 ()
+            记录集1.置连接 (数据库连接1)
+            记录集1.打开 (“select cs from codeshare where cs=” ＋ “'” ＋ carrier ＋ “'”, #SQL语句, )
+            .判断开始 (记录集1.记录数量 ＞ 0)
+                记录集1.关闭 ()
+
+                newdate ＝ 编辑框5日期转换 ()
+                记录集1.置连接 (数据库连接1)
+                记录集1.打开 (“SELECT hl FROM hlcodeshare where datestart<=” ＋ 到文本 (newdate) ＋ “and dateend>=” ＋ 到文本 (newdate), #SQL语句, )  ' 数字型变量 要先改为到文本（）才能用
+                记录集1.到首记录 ()
+                记录集1.读文本 (“hl”, hl)
+                透明标签1codeshare.标题 ＝ hl ＋ “ Season”
+                调试输出 (hl)
+
+                记录集1.置连接 (数据库连接1)
+                记录集1.打开 (“select * from ini where sheetname='codeshare'”, #SQL语句, )
+                记录集1.读逻辑值 (“REMARK”, REMARK)
+                .如果真 (REMARK ＝ 真)
+                    记录集1.读文本 (“currency”, currency1)
+                    记录集1.读文本 (“ondate”, ondate)
+                    记录集1.读文本 (“Until”, until)
+                    记录集1.读文本 (“NG”, netorgross)
+                    记录集1.读文本 (“CHD”, CHD)
+                    记录集1.读文本 (“INF”, INF)
+                    记录集1.读整数 (“yryq”, YRYQ)
+                    记录集1.读整数 (“addon”, addon)
+                    透明标签ADDON.标题 ＝ 到文本 (addon)
+                    透明标签8ng.标题 ＝ netorgross
+                    透明标签7.标题 ＝ currency1
+                    记录集1.读文本 (“applic”, ApplicableRoute)
+                    透明标签8applic.标题 ＝ “”
+                    透明标签8applic.标题 ＝ ApplicableRoute
+
+                    ' 窗口1.透明标签7.标题 ＝ currency1
+                    透明标签onafter.标题 ＝ “On/After:  ” ＋ ondate
+                    透明标签until.标题 ＝ “Until:         ” ＋ until
+                    CHDINFSEARCH ()
+                    .判断开始 (YRYQ ＝ 1)
+                        按钮2yryq.可视 ＝ 真
+
+                    .默认
+                        按钮2yryq.可视 ＝ 假
+                    .判断结束
+
+                .如果真结束
+
+                记录集1.关闭 ()
+
+                记录集1.置连接 (数据库连接1)
+                记录集1.打开 (“SELECT * FROM codeshare where sectors=” ＋ “'” ＋ sector ＋ “'” ＋ “and hl=” ＋ “'” ＋ hl ＋ “'”, #SQL语句, )
+                .判断开始 (记录集1.记录数量 ＞ 0)
+                    记录集1.到首记录 ()
+                    记录集1.读文本 (class, price)
+
+                .默认
+                    记录集1.关闭 ()
+                    记录集1.置连接 (数据库连接1)
+                    记录集1.打开 (“SELECT * FROM codeshare where sectors=” ＋ “'” ＋ sector2 ＋ “'” ＋ “and hl=” ＋ “'” ＋ hl ＋ “'”, #SQL语句, )
+                    记录集1.到首记录 ()
+                    记录集1.读文本 (class, price)
+                .判断结束
+                调试输出 (记录集1.记录数量)
+                透明标签7spaPRICE.字体.字体名称 ＝ “Calibri”
+                透明标签7spaPRICE.字体.字体大小 ＝ 18
+                透明标签7spaPRICE.标题 ＝ “” ＋ 到文本 (四舍五入 (到数值 (price) ÷ 到数值 (编辑框2.内容), 2))
+
+                窗口1.透明标签7spaPRICE.字体.字体名称 ＝ “Comic Sans MS”
+                窗口1.透明标签7spaPRICE.字体.字体大小 ＝ 22
+                窗口1.透明标签7spaPRICE.标题 ＝ “” ＋ 到文本 (四舍五入 (到数值 (price) ÷ 到数值 (编辑框2.内容), 2))
+
+
+            .默认
+                errormessage ()
+            .判断结束
+
+
+        .判断结束
+
+
+
+
+
+
+
+
+    .判断 (searchmethod ＝ 4)
+        透明标签rbdcheck.可视 ＝ 真
+        RBD检查 ()
+    .默认
+
+    .判断结束
+    调试输出 (取文本右边 (sector, 3) ＋ 取文本左边 (sector, 3))
+.如果结束
+
+
+
+
+
+.如果 (数据类型 ＝ #CF_TEXT)  ' 还原剪切板数据
+    置剪辑板文本 (剪切板暂存文本)
+.否则
+    ' 复制图片到剪贴板 (剪切板暂存图片)
+.如果结束
+
+
+.子程序 _按钮3打开地址_被单击
+
+通用对话框1.过滤器 ＝ “mdb(*.mdb)|*.mdb”
+通用对话框1.打开 ()  ' 通用对话框 就是开一个windows对话框的窗口 打开就是打开这个窗口
+透明标签2数据库地址.标题 ＝ 通用对话框1.文件名  ' 1 标签没有内容的[.命令] 用的是[.标题] 2通用对话框。文件名就是选取要选的文件 并返回该文件的完整路径
+编辑框2.内容 ＝ “1.00”
+
+.子程序 _按钮1手动查询_被单击
+.局部变量 classhand, 文本型
+.局部变量 price1, 文本型
+.局部变量 newrbd, 文本型
+.局部变量 编辑框8后五位, 文本型
+.局部变量 N8, 整数型
+.局部变量 currency1, 文本型
+.局部变量 ondate, 文本型
+.局部变量 until, 文本型
+.局部变量 NetorGross, 文本型
+.局部变量 ApplicableRoute, 文本型
+.局部变量 newdate, 整数型, , , 新日期到整数
+.局部变量 hl, 文本型, , , HighLow season 标记变量
+.局部变量 Newmth, 文本型, , , 储存重新整理后的年月日 yyyymmdd
+
+
+.判断开始 (数据库连接1.连接Access (透明标签2数据库地址.标题, “”) ＝ 真)
+    调试输出 (数据库连接1.连接Access (透明标签2数据库地址.标题, “”))  ' 数据库连接 返回值为:[真/假] [真]表示连接成功
+
+    ' 超级编辑框1note.内容 ＝ 到文本 (读入文件 (透明标签8超级编框路径.标题))
+
+
+.默认
+    信息框 (“opps...:” ＋ 数据库连接1.最后错误, #错误图标, “opps...:”)
+    返回 ()
+.判断结束
+
+透明标签7spaPRICE.标题 ＝ “”
+sector ＝ 到文本 (编辑框1.内容)
+调试输出 (sector)
+carrier ＝ 到文本 (取文本左边 (编辑框3.内容, 2))
+classhand ＝ 到文本 (编辑框4class.内容)
+sector2 ＝ 取文本右边 (sector, 3) ＋ 取文本左边 (sector, 3)
+调试输出 (取文本右边 (sector, 3) ＋ 取文本左边 (sector, 3))
+记录集1.置连接 (数据库连接1)
+记录集1.打开 (“select * from ini”, #SQL语句, )
+记录集1.到首记录 ()
+记录集1.读文本 (“applic”, ApplicableRoute)
+记录集1.读文本 (“currency”, currency1)
+透明标签7.标题 ＝ currency1
+' 窗口1.透明标签7.标题 ＝ currency1
+记录集1.读文本 (“CHD”, CHD)
+记录集1.读文本 (“INF”, INF)
+记录集1.读整数 (“searchme”, searchmethod)
+透明标签8m.标题 ＝ 到文本 (searchmethod)
+记录集1.读整数 (“addon”, addon)
+透明标签ADDON.标题 ＝ 到文本 (addon)
+透明标签8applic.标题 ＝ ApplicableRoute
+透明标签8N2G2N.标题 ＝ “”
+' 窗口1.透明标签8N2G2N.标题 ＝ “”
+记录集1.读整数 (“yryq”, YRYQ)
+.判断开始 (YRYQ ＝ 1)
+    按钮2yryq.可视 ＝ 真
+
+.默认
+    按钮2yryq.可视 ＝ 假
+
+.判断结束
+
+CHDINFSEARCH ()
+
+
+
+
+.判断开始 (searchmethod ＝ 1)
+    透明标签rbdcheck.可视 ＝ 假
+    组合框YEAR.可视 ＝ 假
+    记录集1.关闭 ()
+    记录集1.置连接 (数据库连接1)
+    记录集1.打开 (“select cs from spa where cs=” ＋ “'” ＋ carrier ＋ “'”, #SQL语句, )
+    .判断开始 (记录集1.记录数量 ＞ 0)
+        记录集1.关闭 ()
+        透明标签1codeshare.标题 ＝ “”
+        记录集1.置连接 (数据库连接1)
+        记录集1.打开 (“select * from ini where sheetname='spa'”, #SQL语句, )
+        记录集1.读逻辑值 (“REMARK”, REMARK)
+        .如果真 (REMARK ＝ 真)
+            记录集1.读文本 (“currency”, currency1)
+            记录集1.读文本 (“ondate”, ondate)
+            记录集1.读文本 (“Until”, until)
+            记录集1.读文本 (“NG”, NetorGross)
+            记录集1.读文本 (“CHD”, CHD)
+            记录集1.读文本 (“INF”, INF)
+            记录集1.读整数 (“yryq”, YRYQ)
+            记录集1.读整数 (“addon”, addon)
+            透明标签ADDON.标题 ＝ 到文本 (addon)
+            记录集1.读文本 (“applic”, ApplicableRoute)
+            透明标签8applic.标题 ＝ “”
+            透明标签8applic.标题 ＝ ApplicableRoute
+            透明标签8ng.标题 ＝ NetorGross
+            透明标签7.标题 ＝ currency1
+            ' 窗口1.透明标签7.标题 ＝ currency1
+            透明标签onafter.标题 ＝ “On/After:  ” ＋ ondate
+            透明标签until.标题 ＝ “Until:         ” ＋ until
+            CHDINFSEARCH ()
+            .判断开始 (YRYQ ＝ 1)
+                按钮2yryq.可视 ＝ 真
+
+            .默认
+                按钮2yryq.可视 ＝ 假
+            .判断结束
+
+        .如果真结束
+
+
+        记录集1.关闭 ()
+
+        记录集1.置连接 (数据库连接1)
+        记录集1.打开 (“SELECT * FROM spa where sectors=” ＋ “'” ＋ sector ＋ “'” ＋ “or sectors=” ＋ “'” ＋ sector2 ＋ “'”, #SQL语句, )
+        .判断开始 (记录集1.记录数量 ＞ 0)
+            记录集1.到首记录 ()
+            记录集1.读文本 (classhand, price)
+            透明标签7spaPRICE.字体.字体名称 ＝ “Calibri”
+            透明标签7spaPRICE.字体.字体大小 ＝ 18
+            透明标签7spaPRICE.标题 ＝ “” ＋ 到文本 (四舍五入 (到数值 (price) ÷ 到数值 (编辑框2.内容), 2))
+
+            窗口1.透明标签7spaPRICE.字体.字体名称 ＝ “Comic Sans MS”
+            窗口1.透明标签7spaPRICE.字体.字体大小 ＝ 22
+            窗口1.透明标签7spaPRICE.标题 ＝ “” ＋ 到文本 (四舍五入 (到数值 (price) ÷ 到数值 (编辑框2.内容), 2))
+
+
+        .默认
+            errormessage ()
+
+        .判断结束
+
+
+    .默认
+        记录集1.关闭 ()
+        记录集1.置连接 (数据库连接1)
+        记录集1.打开 (“select cs from classmap where cs=” ＋ “'” ＋ carrier ＋ “'”, #SQL语句, )
+        .判断开始 (记录集1.记录数量 ＞ 0)
+            记录集1.关闭 ()
+            记录集1.置连接 (数据库连接1)
+            记录集1.打开 (“select SPARBD from classmap where TicketRBD=” ＋ “'” ＋ classhand ＋ “'”, #SQL语句, )
+            记录集1.到首记录 ()  ' 3 .记录集指针到第一条开始
+            记录集1.读文本 (“SPARBD”, newrbd)
+            透明标签1codeshare.标题 ＝ “SPA RBD:” ＋ 到文本 (newrbd)
+            记录集1.关闭 ()
+            记录集1.置连接 (数据库连接1)
+            记录集1.打开 (“SELECT * FROM spa where sectors=” ＋ “'” ＋ sector ＋ “'” ＋ “or sectors=” ＋ “'” ＋ sector2 ＋ “'”, #SQL语句, )
+            .判断开始 (记录集1.记录数量 ＞ 0)
+                记录集1.到首记录 ()
+                记录集1.读文本 (newrbd, price)
+                透明标签7spaPRICE.字体.字体名称 ＝ “Calibri”
+                透明标签7spaPRICE.字体.字体大小 ＝ 18
+                透明标签7spaPRICE.标题 ＝ “” ＋ 到文本 (四舍五入 (到数值 (price) ÷ 到数值 (编辑框2.内容), 2))
+
+                窗口1.透明标签7spaPRICE.字体.字体名称 ＝ “Comic Sans MS”
+                窗口1.透明标签7spaPRICE.字体.字体大小 ＝ 22
+                窗口1.透明标签7spaPRICE.标题 ＝ “” ＋ 到文本 (四舍五入 (到数值 (price) ÷ 到数值 (编辑框2.内容), 2))
+
+
+            .默认
+                errormessage ()
+            .判断结束
+
+
+        .默认
+            errormessage ()
+
+        .判断结束
+
+
+    .判断结束
+
+
+.判断 (searchmethod ＝ 2)
+    透明标签rbdcheck.可视 ＝ 假
+    组合框YEAR.可视 ＝ 假
+    记录集1.关闭 ()
+    记录集1.置连接 (数据库连接1)
+    记录集1.打开 (“select cs from spa where cs=” ＋ “'” ＋ carrier ＋ “'”, #SQL语句, )
+    .判断开始 (记录集1.记录数量 ＞ 0)
+        记录集1.关闭 ()
+        透明标签1codeshare.标题 ＝ “”
+        记录集1.置连接 (数据库连接1)
+        记录集1.打开 (“select * from ini where sheetname='spa'”, #SQL语句, )
+        记录集1.读逻辑值 (“REMARK”, REMARK)
+        .如果真 (REMARK ＝ 真)
+            记录集1.读文本 (“currency”, currency1)
+            记录集1.读文本 (“ondate”, ondate)
+            记录集1.读文本 (“Until”, until)
+            记录集1.读文本 (“NG”, NetorGross)
+            记录集1.读文本 (“CHD”, CHD)
+            记录集1.读文本 (“INF”, INF)
+            记录集1.读整数 (“yryq”, YRYQ)
+            记录集1.读文本 (“applic”, ApplicableRoute)
+            记录集1.读整数 (“addon”, addon)
+            透明标签ADDON.标题 ＝ 到文本 (addon)
+            透明标签8applic.标题 ＝ “”
+            透明标签8applic.标题 ＝ ApplicableRoute
+            透明标签8ng.标题 ＝ NetorGross
+            透明标签7.标题 ＝ currency1
+            ' 窗口1.透明标签7.标题 ＝ currency1
+            透明标签onafter.标题 ＝ “On/After:  ” ＋ ondate
+            透明标签until.标题 ＝ “Until:         ” ＋ until
+            CHDINFSEARCH ()
+            .判断开始 (YRYQ ＝ 1)
+                按钮2yryq.可视 ＝ 真
+
+            .默认
+                按钮2yryq.可视 ＝ 假
+            .判断结束
+
+        .如果真结束
+
+        记录集1.关闭 ()
+
+        记录集1.置连接 (数据库连接1)
+        记录集1.打开 (“SELECT * FROM spa where sectors=” ＋ “'” ＋ sector ＋ “'” ＋ “or sectors=” ＋ “'” ＋ sector2 ＋ “'”, #SQL语句, )
+        .判断开始 (记录集1.记录数量 ＞ 0)
+            记录集1.到首记录 ()
+            记录集1.读文本 (classhand, price)
+            透明标签7spaPRICE.字体.字体名称 ＝ “Calibri”
+            透明标签7spaPRICE.字体.字体大小 ＝ 18
+            透明标签7spaPRICE.标题 ＝ “” ＋ 到文本 (四舍五入 (到数值 (price) ÷ 到数值 (编辑框2.内容), 2))
+
+            窗口1.透明标签7spaPRICE.字体.字体名称 ＝ “Comic Sans MS”
+            窗口1.透明标签7spaPRICE.字体.字体大小 ＝ 22
+            窗口1.透明标签7spaPRICE.标题 ＝ “” ＋ 到文本 (四舍五入 (到数值 (price) ÷ 到数值 (编辑框2.内容), 2))
+
+
+
+        .判断 (addon ＝ 1)
+
+            price ＝ addon1SPA ()
+            透明标签7spaPRICE.字体.字体名称 ＝ “Calibri”
+            透明标签7spaPRICE.字体.字体大小 ＝ 18
+            透明标签7spaPRICE.标题 ＝ “” ＋ 到文本 (price)
+
+            窗口1.透明标签7spaPRICE.字体.字体名称 ＝ “Comic Sans MS”
+            窗口1.透明标签7spaPRICE.字体.字体大小 ＝ 22
+            窗口1.透明标签7spaPRICE.标题 ＝ “” ＋ 到文本 (price)
+        .判断 (addon ＝ 2)
+            组合框YEAR.可视 ＝ 真
+            price ＝ addon2SPA ()
+            透明标签7spaPRICE.字体.字体名称 ＝ “Calibri”
+            透明标签7spaPRICE.字体.字体大小 ＝ 18
+            透明标签7spaPRICE.标题 ＝ “” ＋ 到文本 (四舍五入 (到数值 (price) ÷ 到数值 (编辑框2.内容), 2))
+
+            窗口1.透明标签7spaPRICE.字体.字体名称 ＝ “Comic Sans MS”
+            窗口1.透明标签7spaPRICE.字体.字体大小 ＝ 22
+            窗口1.透明标签7spaPRICE.标题 ＝ “” ＋ 到文本 (四舍五入 (到数值 (price) ÷ 到数值 (编辑框2.内容), 2))
+
+
+        .判断 (addon ＝ 3)
+            addon3SPA ()
+        .默认
+            errormessage ()
+
+
+        .判断结束
+
+
+    .默认
+        记录集1.关闭 ()
+        记录集1.置连接 (数据库连接1)
+        记录集1.打开 (“select cs from codeshare where cs=” ＋ “'” ＋ carrier ＋ “'”, #SQL语句, )
+        .判断开始 (记录集1.记录数量 ＞ 0)
+            记录集1.关闭 ()
+            透明标签1codeshare.标题 ＝ “”
+            记录集1.置连接 (数据库连接1)
+            记录集1.打开 (“select * from ini where sheetname='codeshare'”, #SQL语句, )
+            记录集1.读逻辑值 (“REMARK”, REMARK)
+            .如果真 (REMARK ＝ 真)
+                记录集1.读文本 (“currency”, currency1)
+                记录集1.读文本 (“ondate”, ondate)
+                记录集1.读文本 (“Until”, until)
+                记录集1.读文本 (“NG”, NetorGross)
+                记录集1.读文本 (“CHD”, CHD)
+                记录集1.读文本 (“INF”, INF)
+                记录集1.读整数 (“yryq”, YRYQ)
+                记录集1.读文本 (“applic”, ApplicableRoute)
+                记录集1.读整数 (“addon”, addon)
+                透明标签ADDON.标题 ＝ 到文本 (addon)
+                透明标签8applic.标题 ＝ “”
+                透明标签8applic.标题 ＝ ApplicableRoute
+                透明标签8ng.标题 ＝ NetorGross
+                透明标签7.标题 ＝ currency1
+                ' 窗口1.透明标签7.标题 ＝ currency1
+                透明标签onafter.标题 ＝ “On/After:  ” ＋ ondate
+                透明标签until.标题 ＝ “Until:         ” ＋ until
+                CHDINFSEARCH ()
+                .判断开始 (YRYQ ＝ 1)
+                    按钮2yryq.可视 ＝ 真
+
+                .默认
+                    按钮2yryq.可视 ＝ 假
+                .判断结束
+
+            .如果真结束
+
+
+            记录集1.关闭 ()
+
+            记录集1.置连接 (数据库连接1)
+            记录集1.打开 (“SELECT * FROM codeshare where sectors=” ＋ “'” ＋ sector ＋ “'” ＋ “or sectors=” ＋ “'” ＋ sector2 ＋ “'”, #SQL语句, )
+            .判断开始 (记录集1.记录数量 ＞ 0)
+                记录集1.到首记录 ()
+                记录集1.读文本 (classhand, price)
+                透明标签7spaPRICE.字体.字体名称 ＝ “Calibri”
+                透明标签7spaPRICE.字体.字体大小 ＝ 18
+                透明标签7spaPRICE.标题 ＝ “” ＋ 到文本 (四舍五入 (到数值 (price) ÷ 到数值 (编辑框2.内容), 2))
+
+                窗口1.透明标签7spaPRICE.字体.字体名称 ＝ “Comic Sans MS”
+                窗口1.透明标签7spaPRICE.字体.字体大小 ＝ 22
+                窗口1.透明标签7spaPRICE.标题 ＝ “” ＋ 到文本 (四舍五入 (到数值 (price) ÷ 到数值 (编辑框2.内容), 2))
+
+
+            .判断 (addon ＝ 1)
+
+                price ＝ addon1CODESHARE ()
+                透明标签7spaPRICE.字体.字体名称 ＝ “Calibri”
+                透明标签7spaPRICE.字体.字体大小 ＝ 18
+                透明标签7spaPRICE.标题 ＝ “” ＋ 到文本 (price)
+
+                窗口1.透明标签7spaPRICE.字体.字体名称 ＝ “Comic Sans MS”
+                窗口1.透明标签7spaPRICE.字体.字体大小 ＝ 22
+                窗口1.透明标签7spaPRICE.标题 ＝ “” ＋ 到文本 (price)
+            .判断 (addon ＝ 2)
+                组合框YEAR.可视 ＝ 真
+                price ＝ addon2CODESHARE ()
+                透明标签7spaPRICE.字体.字体名称 ＝ “Calibri”
+                透明标签7spaPRICE.字体.字体大小 ＝ 18
+                透明标签7spaPRICE.标题 ＝ “” ＋ 到文本 (四舍五入 (到数值 (price) ÷ 到数值 (编辑框2.内容), 2))
+
+                窗口1.透明标签7spaPRICE.字体.字体名称 ＝ “Comic Sans MS”
+                窗口1.透明标签7spaPRICE.字体.字体大小 ＝ 22
+                窗口1.透明标签7spaPRICE.标题 ＝ “” ＋ 到文本 (四舍五入 (到数值 (price) ÷ 到数值 (编辑框2.内容), 2))
+
+
+            .判断 (addon ＝ 3)
+                addon3CODESHARE ()
+
+            .默认
+                errormessage ()
+
+
+            .判断结束
+
+
+        .默认
+            errormessage ()
+
+        .判断结束
+
+
+
+
+
+
+    .判断结束
+
+
+
+
+
+.判断 (searchmethod ＝ 3)
+    透明标签rbdcheck.可视 ＝ 假
+    组合框YEAR.可视 ＝ 真
+    记录集1.关闭 ()
+    记录集1.置连接 (数据库连接1)
+    记录集1.打开 (“select cs from spa where cs=” ＋ “'” ＋ carrier ＋ “'”, #SQL语句, )
+    .判断开始 (记录集1.记录数量 ＞ 0)
+        记录集1.关闭 ()
+        透明标签1codeshare.标题 ＝ “”
+
+        newdate ＝ 编辑框5日期转换 ()
+        记录集1.置连接 (数据库连接1)
+        记录集1.打开 (“SELECT hl FROM hlspa where datestart<=” ＋ 到文本 (newdate) ＋ “and dateend>=” ＋ 到文本 (newdate), #SQL语句, )  ' 数字型变量 要先改为到文本（）才能用
+        记录集1.到首记录 ()
+        记录集1.读文本 (“hl”, hl)
+        调试输出 (hl)
+
+        记录集1.置连接 (数据库连接1)
+        记录集1.打开 (“select * from ini where sheetname='spa'”, #SQL语句, )
+        记录集1.读逻辑值 (“REMARK”, REMARK)
+        .如果真 (REMARK ＝ 真)
+            记录集1.读文本 (“currency”, currency1)
+            记录集1.读文本 (“ondate”, ondate)
+            记录集1.读文本 (“Until”, until)
+            记录集1.读文本 (“NG”, NetorGross)
+            记录集1.读文本 (“CHD”, CHD)
+            记录集1.读文本 (“INF”, INF)
+            记录集1.读整数 (“yryq”, YRYQ)
+            记录集1.读文本 (“applic”, ApplicableRoute)
+            记录集1.读整数 (“addon”, addon)
+            透明标签ADDON.标题 ＝ 到文本 (addon)
+            透明标签8applic.标题 ＝ “”
+            透明标签8applic.标题 ＝ ApplicableRoute
+            透明标签8ng.标题 ＝ NetorGross
+            透明标签7.标题 ＝ currency1
+            ' 窗口1.透明标签7.标题 ＝ currency1
+            透明标签onafter.标题 ＝ “On/After:  ” ＋ ondate
+            透明标签until.标题 ＝ “Until:         ” ＋ until
+            CHDINFSEARCH ()
+            .判断开始 (YRYQ ＝ 1)
+                按钮2yryq.可视 ＝ 真
+
+            .默认
+                按钮2yryq.可视 ＝ 假
+            .判断结束
+
+        .如果真结束
+
+        透明标签1codeshare.标题 ＝ hl ＋ “ Season”
+        记录集1.关闭 ()
+
+        记录集1.置连接 (数据库连接1)
+        记录集1.打开 (“SELECT * FROM spa where sectors=” ＋ “'” ＋ sector ＋ “'” ＋ “and hl=” ＋ “'” ＋ hl ＋ “'”, #SQL语句, )
+        .判断开始 (记录集1.记录数量 ＞ 0)
+            记录集1.到首记录 ()
+            记录集1.读文本 (classhand, price)
+
+        .默认
+            记录集1.关闭 ()
+            记录集1.置连接 (数据库连接1)
+            记录集1.打开 (“SELECT * FROM spa where sectors=” ＋ “'” ＋ sector2 ＋ “'” ＋ “and hl=” ＋ “'” ＋ hl ＋ “'”, #SQL语句, )
+            记录集1.到首记录 ()
+            记录集1.读文本 (classhand, price)
+
+        .判断结束
+        调试输出 (记录集1.记录数量)
+        透明标签7spaPRICE.字体.字体名称 ＝ “Calibri”
+        透明标签7spaPRICE.字体.字体大小 ＝ 18
+        透明标签7spaPRICE.标题 ＝ “” ＋ 到文本 (四舍五入 (到数值 (price) ÷ 到数值 (编辑框2.内容), 2))
+
+        窗口1.透明标签7spaPRICE.字体.字体名称 ＝ “Comic Sans MS”
+        窗口1.透明标签7spaPRICE.字体.字体大小 ＝ 22
+        窗口1.透明标签7spaPRICE.标题 ＝ “” ＋ 到文本 (四舍五入 (到数值 (price) ÷ 到数值 (编辑框2.内容), 2))
+
+
+    .默认
+        记录集1.关闭 ()
+        记录集1.置连接 (数据库连接1)
+        记录集1.打开 (“select cs from codeshare where cs=” ＋ “'” ＋ carrier ＋ “'”, #SQL语句, )
+        .判断开始 (记录集1.记录数量 ＞ 0)
+            记录集1.关闭 ()
+
+            newdate ＝ 编辑框5日期转换 ()  ' 子程序引用
+            记录集1.置连接 (数据库连接1)
+            记录集1.打开 (“SELECT hl FROM hlcodeshare where datestart<=” ＋ 到文本 (newdate) ＋ “and dateend>=” ＋ 到文本 (newdate), #SQL语句, )  ' 数字型变量 要先改为到文本（）才能用
+            记录集1.到首记录 ()
+            记录集1.读文本 (“hl”, hl)
+            调试输出 (hl)
+            透明标签1codeshare.标题 ＝ hl ＋ “ Season”
+            记录集1.置连接 (数据库连接1)
+            记录集1.打开 (“select * from ini where sheetname='codeshare'”, #SQL语句, )
+            记录集1.读逻辑值 (“REMARK”, REMARK)
+            .如果真 (REMARK ＝ 真)
+                记录集1.读文本 (“currency”, currency1)
+                记录集1.读文本 (“ondate”, ondate)
+                记录集1.读文本 (“Until”, until)
+                记录集1.读文本 (“NG”, NetorGross)
+                透明标签8ng.标题 ＝ NetorGross
+                透明标签7.标题 ＝ currency1
+                记录集1.读文本 (“CHD”, CHD)
+                记录集1.读文本 (“INF”, INF)
+                记录集1.读整数 (“yryq”, YRYQ)
+                记录集1.读文本 (“applic”, ApplicableRoute)
+                记录集1.读整数 (“addon”, addon)
+                透明标签ADDON.标题 ＝ 到文本 (addon)
+                透明标签8applic.标题 ＝ “”
+                透明标签8applic.标题 ＝ ApplicableRoute
+                ' 窗口1.透明标签7.标题 ＝ currency1
+                透明标签onafter.标题 ＝ “On/After:  ” ＋ ondate
+                透明标签until.标题 ＝ “Until:         ” ＋ until
+                CHDINFSEARCH ()
+                .判断开始 (YRYQ ＝ 1)
+                    按钮2yryq.可视 ＝ 真
+
+                .默认
+                    按钮2yryq.可视 ＝ 假
+                .判断结束
+
+            .如果真结束
+
+
+            记录集1.关闭 ()
+
+            记录集1.置连接 (数据库连接1)
+            记录集1.打开 (“SELECT * FROM codeshare where sectors=” ＋ “'” ＋ sector ＋ “'” ＋ “and hl=” ＋ “'” ＋ hl ＋ “'”, #SQL语句, )
+            .判断开始 (记录集1.记录数量 ＞ 0)
+                记录集1.到首记录 ()
+                记录集1.读文本 (classhand, price)
+
+            .默认
+                记录集1.关闭 ()
+                记录集1.置连接 (数据库连接1)
+                记录集1.打开 (“SELECT * FROM codeshare where sectors=” ＋ “'” ＋ sector2 ＋ “'” ＋ “and hl=” ＋ “'” ＋ hl ＋ “'”, #SQL语句, )
+                记录集1.到首记录 ()
+                记录集1.读文本 (classhand, price)
+            .判断结束
+            调试输出 (记录集1.记录数量)
+            透明标签7spaPRICE.字体.字体名称 ＝ “Calibri”
+            透明标签7spaPRICE.字体.字体大小 ＝ 18
+            透明标签7spaPRICE.标题 ＝ “” ＋ 到文本 (四舍五入 (到数值 (price) ÷ 到数值 (编辑框2.内容), 2))
+
+            窗口1.透明标签7spaPRICE.字体.字体名称 ＝ “Comic Sans MS”
+            窗口1.透明标签7spaPRICE.字体.字体大小 ＝ 22
+            窗口1.透明标签7spaPRICE.标题 ＝ “” ＋ 到文本 (四舍五入 (到数值 (price) ÷ 到数值 (编辑框2.内容), 2))
+
+
+        .默认
+            errormessage ()
+
+        .判断结束
+
+
+    .判断结束
+
+
+
+
+
+
+
+
+
+    调试输出 (取文本右边 (sector, 3) ＋ 取文本左边 (sector, 3))
+.判断 (searchmethod ＝ 4)
+    透明标签rbdcheck.可视 ＝ 真
+    RBD检查 ()
+
+.默认
+
+.判断结束
+
+
+
+
+.子程序 _按钮1N2G_被单击
+
+
+窗口1.透明标签7spaPRICE.字体.字体名称 ＝ “Comic Sans MS”
+窗口1.透明标签7spaPRICE.字体.字体大小 ＝ 22
+窗口1.透明标签7spaPRICE.标题 ＝ “” ＋ 到文本 (四舍五入 (到数值 (price) ÷ 到数值 (编辑框2.内容) ÷ 到数值 (0.91), 2))
+' 窗口1.透明标签8N2G2N.标题 ＝ “N2G”
+
+
+透明标签7spaPRICE.字体.字体名称 ＝ “Calibri”
+透明标签7spaPRICE.字体.字体大小 ＝ 18
+透明标签7spaPRICE.标题 ＝ “” ＋ 到文本 (四舍五入 (到数值 (price) ÷ 到数值 (编辑框2.内容) ÷ 到数值 (0.91), 2))
+透明标签8N2G2N.标题 ＝ “N2G”
+
+
+
+.子程序 _按钮2G2N_被单击
+.局部变量 date, 整数型
+.局部变量 hl, 文本型
+
+
+窗口1.透明标签7spaPRICE.字体.字体名称 ＝ “Comic Sans MS”
+窗口1.透明标签7spaPRICE.字体.字体大小 ＝ 22
+窗口1.透明标签7spaPRICE.标题 ＝ “” ＋ 到文本 (四舍五入 (到数值 (price) ÷ 到数值 (编辑框2.内容) × 到数值 (0.91), 2))
+' 窗口1.透明标签8N2G2N.标题 ＝ “G2N”
+
+
+透明标签7spaPRICE.字体.字体名称 ＝ “Calibri”
+透明标签7spaPRICE.字体.字体大小 ＝ 18
+透明标签7spaPRICE.标题 ＝ “” ＋ 到文本 (四舍五入 (到数值 (price) ÷ 到数值 (编辑框2.内容) × 到数值 (0.91), 2))
+透明标签8N2G2N.标题 ＝ “G2N”
+
+' date ＝ 到数值 (20150102)
+' 记录集1.置连接 (数据库连接1)
+' 记录集1.打开 (“SELECT hl FROM hl where date1<=” ＋ 到文本 (date) ＋ “and date2>=” ＋ 到文本 (date), #SQL语句, )  ' 数字型变量 要先改为到文本（）才能用
+' 记录集1.到首记录 ()
+' 记录集1.读文本 (“hl”, hl)
+' 调试输出 (hl)
+
+.子程序 _按钮2yryq_被单击
+
+记录集1.关闭 ()
+记录集1.置连接 (数据库连接1)
+记录集1.打开 (“SELECT * FROM yryq where sectors=” ＋ “'” ＋ sector ＋ “'” ＋ “or sectors=” ＋ “'” ＋ sector2 ＋ “'”, #SQL语句, )
+.判断开始 (记录集1.记录数量 ＞ 0)
+    记录集1.到首记录 ()
+    记录集1.读文本 (“YRYQ”, yryqp)
+
+    按钮2yryq.标题 ＝ yryqp
+.默认
+    按钮2yryq.标题 ＝ “N/F”
+    ' 记录集1.关闭 ()
+    ' 记录集1.置连接 (数据库连接1)
+    ' 记录集1.打开 (“SELECT * FROM yryq where sectors=” ＋ “'” ＋ sector2 ＋ “'”, #SQL语句, )
+    ' 记录集1.到首记录 ()
+    ' 记录集1.读文本 (“YRYQ”, yryqp)
+.判断结束
+
+
+
+
+.子程序 _按钮1INF_被单击
+
+.判断开始 (INF ＝ “MPA”)
+    窗口1.透明标签7spaPRICE.字体.字体名称 ＝ “Calibri”
+    窗口1.透明标签7spaPRICE.字体.字体大小 ＝ 12
+    窗口1.透明标签7spaPRICE.标题 ＝ “Infant MPA-P Apply”
+
+    透明标签7spaPRICE.字体.字体名称 ＝ “Calibri”
+    透明标签7spaPRICE.字体.字体大小 ＝ 12
+    透明标签7spaPRICE.标题 ＝ “Infant MPA-P Apply”
+
+
+.默认
+    窗口1.透明标签7spaPRICE.字体.字体名称 ＝ “Comic Sans MS”
+    窗口1.透明标签7spaPRICE.字体.字体大小 ＝ 22
+    窗口1.透明标签7spaPRICE.标题 ＝ “” ＋ 到文本 (四舍五入 (到数值 (透明标签7spaPRICE.标题) × 到数值 (INF), 2))
+    ' 窗口1.透明标签1INF.可视 ＝ 真
+    透明标签7spaPRICE.字体.字体名称 ＝ “Calibri”
+    透明标签7spaPRICE.字体.字体大小 ＝ 18
+    透明标签7spaPRICE.标题 ＝ “” ＋ 到文本 (四舍五入 (到数值 (透明标签7spaPRICE.标题) × 到数值 (INF), 2))
+    按钮1INF.禁止 ＝ 真
+.判断结束
+
+
+.子程序 _按钮1CHD_被单击
+
+
+窗口1.透明标签7spaPRICE.字体.字体名称 ＝ “Comic Sans MS”
+窗口1.透明标签7spaPRICE.字体.字体大小 ＝ 22
+窗口1.透明标签7spaPRICE.标题 ＝ “” ＋ 到文本 (四舍五入 (到数值 (透明标签7spaPRICE.标题) × 到数值 (CHD), 2))
+
+
+透明标签7spaPRICE.字体.字体名称 ＝ “Calibri”
+透明标签7spaPRICE.字体.字体大小 ＝ 18
+透明标签7spaPRICE.标题 ＝ “” ＋ 到文本 (四舍五入 (到数值 (透明标签7spaPRICE.标题) × 到数值 (CHD), 2))
+按钮1CHD.禁止 ＝ 真
+' 窗口1.透明标签1chd.可视 ＝ 真
+
+.子程序 _选择框note_被单击
+
+.如果 (选择框note.选中 ＝ 真)
+    窗口1.可视 ＝ 真
+    窗口1.总在最前 ＝ 真
+.否则
+    选择框note.选中 ＝ 假
+    窗口1.可视 ＝ 假
+.如果结束
+
+
+
+
+.子程序 _超级编辑框1note_被双击, 逻辑型
+.参数 横向位置, 整数型
+.参数 纵向位置, 整数型
+.参数 功能键状态, 整数型
+
+' 超级编辑框1note.只读 ＝ 假
+
+
+.子程序 _按钮save_被单击
+
+' 写到文件 (透明标签8超级编框路径.标题, 到字节集 (超级编辑框1note.内容))
+
+
+.子程序 _按钮opentxtnote_被单击
+
+' 透明标签8超级编框路径.标题 ＝ 子文本替换 (透明标签2数据库地址.标题, “.mdb”, “.docx”, , , 假)
+执行 (4, 透明标签2数据库地址.标题, , , )
+
+
+
+
+
+
+
+
+.子程序 编辑框5日期转换, 整数型, 公开
+.局部变量 Newmth, 文本型
+.局部变量 newdate, 整数型
+.局部变量 N, 整数型
+
+
+Newmth ＝ 编辑框5data.内容
+.循环判断首 ()
+    N ＝ 寻找文本 (Newmth, “/”, , 真)
+    Newmth ＝ 子文本替换 (Newmth, “/”, “”, , , 假)  ' 这部分是用来 删除如果是两张票 全选产生的换行符导致sector2 后半部分取不上后两个字母
+.循环判断尾 (N ≠ -1)
+Newmth ＝ 删全部空 (Newmth)
+调试输出 (Newmth)
+.判断开始 (寻找文本 (Newmth, “JAN”, , 真) ≠ -1)
+    Newmth ＝ 子文本替换 (Newmth, “JAN”, “01”, , , 假)
+.判断 (寻找文本 (Newmth, “may”, , 真) ≠ -1)
+    Newmth ＝ 子文本替换 (Newmth, “may”, “05”, , , 假)
+    调试输出 (Newmth)
+.判断 (寻找文本 (Newmth, “feb”, , 真) ≠ -1)
+    Newmth ＝ 子文本替换 (Newmth, “feb”, “02”, , , 假)
+.判断 (寻找文本 (Newmth, “mar”, , 真) ≠ -1)
+    Newmth ＝ 子文本替换 (Newmth, “mar”, “03”, , , 假)
+.判断 (寻找文本 (Newmth, “apr”, , 真) ≠ -1)
+    Newmth ＝ 子文本替换 (Newmth, “apr”, “04”, , , 假)
+.判断 (寻找文本 (Newmth, “jun”, , 真) ≠ -1)
+    Newmth ＝ 子文本替换 (Newmth, “jun”, “06”, , , 假)
+.判断 (寻找文本 (Newmth, “jul”, , 真) ≠ -1)
+    Newmth ＝ 子文本替换 (Newmth, “jul”, “07”, , , 假)
+.判断 (寻找文本 (Newmth, “aug”, , 真) ≠ -1)
+    Newmth ＝ 子文本替换 (Newmth, “aug”, “08”, , , 假)
+.判断 (寻找文本 (Newmth, “sep”, , 真) ≠ -1)
+    Newmth ＝ 子文本替换 (Newmth, “sep”, “09”, , , 假)
+.判断 (寻找文本 (Newmth, “oct”, , 真) ≠ -1)
+    Newmth ＝ 子文本替换 (Newmth, “oct”, “10”, , , 假)
+.判断 (寻找文本 (Newmth, “nov”, , 真) ≠ -1)
+    Newmth ＝ 子文本替换 (Newmth, “nov”, “11”, , , 假)
+.判断 (寻找文本 (Newmth, “dec”, , 真) ≠ -1)
+    Newmth ＝ 子文本替换 (Newmth, “dec”, “12”, , , 假)
+.默认
+
+.判断结束
+.判断开始断 (取文本长度 (Newmth) ＝ 10)
+    ' Newmth ＝ 组合框YEAR.内容 ＋ 取文本中间 (Newmth, 4, 2) ＋ 取文本左边 (Newmth, 2)
+.' 判断 (取文本长度 (Newmth) ＝ 8)
+    ' 调试输出 (取文本长度 (Newmth))
+    ' Newmth ＝ 组合框YEAR.内容 ＋ 取文本中间 (Newmth, 3, 2) ＋ 取文本左边 (Newmth, 2)
+    ' 调试输出 (取文本中间 (Newmth, 4, 5))
+    ' 调试输出 (取文本左边 (Newmth, 2))
+.' 判断 (取文本长度 (Newmth) ＝ 5)
+    ' Newmth ＝ 组合框YEAR.内容 ＋ 取文本中间 (Newmth, 4, 2) ＋ 取文本左边 (Newmth, 2)
+.' 判断 (取文本长度 (Newmth) ＝ 4)
+    ' Newmth ＝ 组合框YEAR.内容 ＋ 取文本中间 (Newmth, 3, 2) ＋ 取文本左边 (Newmth, 2)
+
+.默认
+
+.判断结束
+
+Newmth ＝ 组合框YEAR.内容 ＋ 取文本中间 (Newmth, 3, 2) ＋ 取文本左边 (Newmth, 2)
+调试输出 (Newmth)
+
+newdate ＝ 到数值 (Newmth)
+返回 (newdate)  ' 这个很重要 就是把 结果newdate的内容或者结果返回出来 给这个子程序 可以供其他程序调用 换句话说就是这段程序干什么的结果返回出去
+
+
+
+
+
+
+.子程序 addon1SPA, 文本型, 公开, 处理SPA返回为 e.g 75% of Y fare 加上 如果在这里规定了子程序类型 e.g 文本型 就要规定返回（要返回的内容） 
+.局部变量 classaddon, 文本型
+.局部变量 sectoraddon, 文本型
+.局部变量 sectoraddon2, 文本型
+.局部变量 priceaddon, 文本型
+.局部变量 RATE, 文本型
+.局部变量 yfare, 文本型
+.局部变量 SPECIAL, 逻辑型, , , access 表项如果为选择框 选中=真 不选=假 如果这项是文本型 选中="TURE" 不选="FALSE"
+.局部变量 addonbase, 文本型
+
+sectoraddon ＝ 取文本右边 (编辑框1.内容, 3)
+调试输出 (sectoraddon)
+carrier ＝ 到文本 (取文本左边 (编辑框3.内容, 2))
+classaddon ＝ 到文本 (编辑框4class.内容)
+sectoraddon2 ＝ 取文本左边 (编辑框1.内容, 3)
+记录集1.关闭 ()
+记录集1.置连接 (数据库连接1)
+记录集1.打开 (“SELECT * FROM ini”, #SQL语句, )
+记录集1.读文本 (“addonbase”, addonbase)
+记录集1.关闭 ()
+记录集1.置连接 (数据库连接1)
+记录集1.打开 (“SELECT * FROM addonspa where sectors='rate'”, #SQL语句, )
+记录集1.到首记录 ()
+记录集1.读文本 (classaddon, RATE)
+调试输出 (RATE)
+记录集1.关闭 ()
+记录集1.置连接 (数据库连接1)
+记录集1.打开 (“SELECT * FROM addonspa where sectors=” ＋ “'” ＋ sector ＋ “'” ＋ “or sectors=” ＋ “'” ＋ sector2 ＋ “'”, #SQL语句, )
+.判断开始 (记录集1.记录数量 ＞ 0)
+    调试输出 (记录集1.记录数量)
+    记录集1.读逻辑值 (“SPECIAL”, SPECIAL)
+    调试输出 (SPECIAL)
+    .判断开始 (SPECIAL ＝ 假)
+        记录集1.读文本 (“y”, yfare)
+        调试输出 (yfare)
+        .判断开始 (yfare ≠ “”)
+            priceaddon ＝ 到文本 (四舍五入 (到数值 (yfare) × 到数值 (RATE) ÷ 到数值 (编辑框2.内容), 2))
+
+        .默认
+            priceaddon ＝ 到文本 (到数值 (RATE)) ＋ addonbase
+        .判断结束
+
+
+        调试输出 (RATE)
+
+    .判断 (SPECIAL ＝ 真)
+        记录集1.读文本 (“y”, yfare)
+        ' 记录集2.关闭 ()
+        ' 记录集2.置连接 (数据库连接1)
+        ' 记录集2.打开 (“SELECT * FROM addonspa where sectors=” ＋ “'” ＋ sector ＋ “'” ＋ “or sectors=” ＋ “'” ＋ sector2 ＋ “'”, #SQL语句, )
+        记录集1.读文本 (classaddon, RATE)
+        .判断开始 (RATE ＝ yfare)
+            priceaddon ＝ 到文本 (四舍五入 (到数值 (yfare) ÷ 到数值 (编辑框2.内容), 2))
+
+        .默认
+            调试输出 (RATE)
+            priceaddon ＝ 到文本 (四舍五入 (到数值 (yfare) × 到数值 (RATE) ÷ 到数值 (编辑框2.内容), 2))
+
+        .判断结束
+
+
+    .默认
+
+    .判断结束
+
+
+.默认
+    记录集1.关闭 ()
+    记录集1.置连接 (数据库连接1)
+    记录集1.打开 (“SELECT * FROM addonspa where sectors=” ＋ “'” ＋ sectoraddon ＋ “'” ＋ “or sectors=” ＋ “'” ＋ sectoraddon2 ＋ “'”, #SQL语句, )
+
+    调试输出 (记录集1.记录数量)
+    记录集1.到首记录 ()
+    记录集1.读文本 (classaddon, priceaddon)
+    调试输出 (priceaddon)
+    priceaddon ＝ 到文本 (到数值 (priceaddon)) ＋ addonbase
+    调试输出 (priceaddon)
+
+.判断结束
+
+
+返回 (priceaddon)
+
+
+
+
+.子程序 addon1CODESHARE, 文本型, 公开, 功能同addon1 SPA 只是专属了表名 表名为addoncodeshare 
+.局部变量 classaddon, 文本型
+.局部变量 sectoraddon, 文本型
+.局部变量 sectoraddon2, 文本型
+.局部变量 priceaddon, 文本型
+.局部变量 RATE, 文本型
+.局部变量 yfare, 文本型
+.局部变量 SPECIAL, 逻辑型, , , access 表项如果为选择框 选中=真 不选=假 如果这项是文本型 选中="TURE" 不选="FALSE"
+.局部变量 addonbase, 文本型
+
+sectoraddon ＝ 取文本右边 (编辑框1.内容, 3)
+调试输出 (sectoraddon)
+carrier ＝ 到文本 (取文本左边 (编辑框3.内容, 2))
+classaddon ＝ 到文本 (编辑框4class.内容)
+sectoraddon2 ＝ 取文本左边 (编辑框1.内容, 3)
+记录集1.关闭 ()
+记录集1.置连接 (数据库连接1)
+记录集1.打开 (“SELECT * FROM ini”, #SQL语句, )
+记录集1.读文本 (“addonbase”, addonbase)
+记录集1.关闭 ()
+记录集1.置连接 (数据库连接1)
+记录集1.打开 (“SELECT * FROM addoncodeshare where sectors='rate'”, #SQL语句, )
+记录集1.到首记录 ()
+记录集1.读文本 (classaddon, RATE)
+调试输出 (RATE)
+记录集1.关闭 ()
+记录集1.置连接 (数据库连接1)
+记录集1.打开 (“SELECT * FROM addoncodeshare where sectors=” ＋ “'” ＋ sector ＋ “'” ＋ “or sectors=” ＋ “'” ＋ sector2 ＋ “'”, #SQL语句, )
+.判断开始 (记录集1.记录数量 ＞ 0)
+    调试输出 (记录集1.记录数量)
+    记录集1.读逻辑值 (“SPECIAL”, SPECIAL)
+    调试输出 (SPECIAL)
+    .判断开始 (SPECIAL ＝ 假)
+        记录集1.读文本 (“y”, yfare)
+        调试输出 (yfare)
+        .判断开始 (yfare ≠ “”)
+            priceaddon ＝ 到文本 (四舍五入 (到数值 (yfare) × 到数值 (RATE) ÷ 到数值 (编辑框2.内容), 2))
+
+        .默认
+            priceaddon ＝ 到文本 (到数值 (RATE)) ＋ addonbase
+        .判断结束
+
+
+        调试输出 (RATE)
+
+    .判断 (SPECIAL ＝ 真)
+        记录集1.读文本 (“y”, yfare)
+        ' 记录集2.关闭 ()
+        ' 记录集2.置连接 (数据库连接1)
+        ' 记录集2.打开 (“SELECT * FROM addoncodeshare where sectors=” ＋ “'” ＋ sector ＋ “'” ＋ “or sectors=” ＋ “'” ＋ sector2 ＋ “'”, #SQL语句, )
+        记录集1.读文本 (classaddon, RATE)
+        .判断开始 (RATE ＝ yfare)
+            priceaddon ＝ 到文本 (四舍五入 (到数值 (yfare) ÷ 到数值 (编辑框2.内容), 2))
+
+        .默认
+            调试输出 (RATE)
+            priceaddon ＝ 到文本 (四舍五入 (到数值 (yfare) × 到数值 (RATE) ÷ 到数值 (编辑框2.内容), 2))
+
+        .判断结束
+
+
+    .默认
+
+    .判断结束
+
+
+.默认
+    记录集1.关闭 ()
+    记录集1.置连接 (数据库连接1)
+    记录集1.打开 (“SELECT * FROM addoncosdeshare where sectors=” ＋ “'” ＋ sectoraddon ＋ “'” ＋ “or sectors=” ＋ “'” ＋ sectoraddon2 ＋ “'”, #SQL语句, )
+
+    调试输出 (记录集1.记录数量)
+    记录集1.到首记录 ()
+    记录集1.读文本 (classaddon, priceaddon)
+    调试输出 (priceaddon)
+    priceaddon ＝ 到文本 (到数值 (priceaddon)) ＋ addonbase
+    调试输出 (priceaddon)
+
+.判断结束
+
+
+返回 (priceaddon)
+
+
+
+.子程序 addon2SPA, 文本型, 公开, 特殊sector 含 HLseason 那种
+.局部变量 classaddon2, 文本型
+.局部变量 hl, 文本型
+.局部变量 newdate, 整数型
+
+sector ＝ 到文本 (编辑框1.内容)
+调试输出 (sector)
+carrier ＝ 到文本 (取文本左边 (编辑框3.内容, 2))
+classaddon2 ＝ 到文本 (编辑框4class.内容)
+sector2 ＝ 取文本右边 (sector, 3) ＋ 取文本左边 (sector, 3)
+
+组合框YEAR.可视 ＝ 真
+记录集1.关闭 ()
+记录集1.置连接 (数据库连接1)
+记录集1.打开 (“select cs from addonspa where cs=” ＋ “'” ＋ carrier ＋ “'”, #SQL语句, )
+
+记录集1.关闭 ()
+
+newdate ＝ 编辑框5日期转换 ()  ' 子程序引用
+
+记录集1.置连接 (数据库连接1)
+记录集1.打开 (“SELECT hl FROM hladdonspa where datestart<=” ＋ 到文本 (newdate) ＋ “and dateend>=” ＋ 到文本 (newdate), #SQL语句, )  ' 数字型变量 要先改为到文本（）才能用
+记录集1.到首记录 ()
+记录集1.读文本 (“hl”, hl)
+调试输出 (hl)
+记录集1.关闭 ()
+
+记录集1.置连接 (数据库连接1)
+记录集1.打开 (“SELECT * FROM addonspa where sectors=” ＋ “'” ＋ sector ＋ “'” ＋ “and hl=” ＋ “'” ＋ hl ＋ “'”, #SQL语句, )
+.判断开始 (记录集1.记录数量 ＞ 0)
+    调试输出 (记录集1.记录数量)
+    记录集1.到首记录 ()
+    记录集1.读文本 (classaddon2, price)
+
+
+.默认
+    记录集1.关闭 ()
+    记录集1.置连接 (数据库连接1)
+    记录集1.打开 (“SELECT * FROM addonspa where sectors=” ＋ “'” ＋ sector2 ＋ “'” ＋ “and hl=” ＋ “'” ＋ hl ＋ “'”, #SQL语句, )
+    记录集1.到首记录 ()
+    记录集1.读文本 (classaddon2, price)
+
+.判断结束
+
+透明标签1codeshare.标题 ＝ hl ＋ “ Season”
+记录集1.关闭 ()
+
+返回 (price)
+
+
+
+
+
+
+.子程序 addon2CODESHARE, 文本型, 公开, 特殊sector 含 HLseason 那种
+.局部变量 classaddon2, 文本型
+.局部变量 hl, 文本型
+.局部变量 newdate, 整数型
+
+sector ＝ 到文本 (编辑框1.内容)
+调试输出 (sector)
+carrier ＝ 到文本 (取文本左边 (编辑框3.内容, 2))
+classaddon2 ＝ 到文本 (编辑框4class.内容)
+sector2 ＝ 取文本右边 (sector, 3) ＋ 取文本左边 (sector, 3)
+
+组合框YEAR.可视 ＝ 真
+记录集1.关闭 ()
+记录集1.置连接 (数据库连接1)
+记录集1.打开 (“select cs from addoncodeshare where cs=” ＋ “'” ＋ carrier ＋ “'”, #SQL语句, )
+
+记录集1.关闭 ()
+
+newdate ＝ 编辑框5日期转换 ()  ' 子程序引用
+
+记录集1.置连接 (数据库连接1)
+记录集1.打开 (“SELECT hl FROM hladdoncodeshare where datestart<=” ＋ 到文本 (newdate) ＋ “and dateend>=” ＋ 到文本 (newdate), #SQL语句, )  ' 数字型变量 要先改为到文本（）才能用
+记录集1.到首记录 ()
+记录集1.读文本 (“hl”, hl)
+调试输出 (hl)
+记录集1.关闭 ()
+
+记录集1.置连接 (数据库连接1)
+记录集1.打开 (“SELECT * FROM addoncodeshare where sectors=” ＋ “'” ＋ sector ＋ “'” ＋ “and hl=” ＋ “'” ＋ hl ＋ “'”, #SQL语句, )
+.判断开始 (记录集1.记录数量 ＞ 0)
+    调试输出 (记录集1.记录数量)
+    记录集1.到首记录 ()
+    记录集1.读文本 (classaddon2, price)
+
+
+.默认
+    记录集1.关闭 ()
+    记录集1.置连接 (数据库连接1)
+    记录集1.打开 (“SELECT * FROM addoncodeshare where sectors=” ＋ “'” ＋ sector2 ＋ “'” ＋ “and hl=” ＋ “'” ＋ hl ＋ “'”, #SQL语句, )
+    记录集1.到首记录 ()
+    记录集1.读文本 (classaddon2, price)
+
+.判断结束
+
+透明标签1codeshare.标题 ＝ hl ＋ “ Season”
+记录集1.关闭 ()
+
+返回 (price)
+
+
+
+.子程序 addon3SPA, , 公开, minium charge for dl 这里因为没规定子程序返回值类型 所以直接执行
+.局部变量 rbd3, 文本型
+.局部变量 N, 整数型
+.局部变量 rbd, 文本型
+.局部变量 addon3, 文本型
+.局部变量 sectoraddon, 文本型
+.局部变量 addon3price, 文本型
+.局部变量 SPECIAL, 逻辑型
+
+
+透明标签rbdcheck.可视 ＝ 真
+记录集1.关闭 ()
+
+记录集1.置连接 (数据库连接1)
+记录集1.打开 (“SELECT * FROM addonspa”, #SQL语句, )
+rbd ＝ 编辑框4class.内容
+
+.计次循环首 (记录集1.记录数量, N)
+    记录集1.读文本 (rbd, rbd3)
+    调试输出 (rbd3)
+    记录集1.读逻辑值 (“SPECIAL”, SPECIAL)
+    .判断开始 (SPECIAL ＝ 假)
+
+    .默认
+        rbd3 ＝ 到文本 (四舍五入 (到数值 (rbd3) ÷ 到数值 (编辑框2.内容), 2))
+
+    .判断结束
+    记录集1.读文本 (“sectors”, sectoraddon)
+    .判断开始 (N ＝ 1)
+        addon3 ＝ 到文本 (N) ＋ “.[” ＋ sectoraddon ＋ “]” ＋ “--” ＋ rbd ＋ “--” ＋ “:” ＋ “.[” ＋ rbd3 ＋ “]”
+        addon3price ＝ rbd3
+
+    .默认
+        addon3 ＝ addon3 ＋ “;  ” ＋ 到文本 (N) ＋ “.[” ＋ sectoraddon ＋ “]” ＋ “--” ＋ rbd ＋ “--” ＋ “:” ＋ “.[” ＋ rbd3 ＋ “]”
+        addon3price ＝ addon3price ＋ “/” ＋ rbd3
+    .判断结束
+
+    N ＝ N ＋ 1
+    记录集1.到下一条 ()
+.计次循环尾 ()
+
+窗口1.透明标签7spaPRICE.字体.字体名称 ＝ “Comic Sans MS”
+窗口1.透明标签7spaPRICE.字体.字体大小 ＝ 12
+透明标签rbdcheck.文本颜色 ＝ #红色
+窗口1.透明标签7spaPRICE.文本颜色 ＝ #红色
+透明标签rbdcheck.标题 ＝ “Minimum Charge :  ” ＋ addon3
+窗口1.透明标签7spaPRICE.标题 ＝ addon3price
+
+
+
+
+
+
+.子程序 addon3CODESHARE, , 公开, minium charge for dl 这里因为没规定子程序返回值类型 所以直接执行
+.局部变量 rbd3, 文本型
+.局部变量 N, 整数型
+.局部变量 rbd, 文本型
+.局部变量 addon3, 文本型
+.局部变量 sectoraddon, 文本型
+.局部变量 addon3price, 文本型
+.局部变量 SPECIAL, 逻辑型
+
+
+透明标签rbdcheck.可视 ＝ 真
+记录集1.关闭 ()
+
+记录集1.置连接 (数据库连接1)
+记录集1.打开 (“SELECT * FROM addoncodeshare”, #SQL语句, )
+rbd ＝ 编辑框4class.内容
+
+.计次循环首 (记录集1.记录数量, N)
+    记录集1.读文本 (rbd, rbd3)
+    调试输出 (rbd3)
+    记录集1.读逻辑值 (“SPECIAL”, SPECIAL)
+    .判断开始 (SPECIAL ＝ 假)
+
+    .默认
+        rbd3 ＝ 到文本 (四舍五入 (到数值 (rbd3) ÷ 到数值 (编辑框2.内容), 2))
+
+    .判断结束
+    记录集1.读文本 (“sectors”, sectoraddon)
+    .判断开始 (N ＝ 1)
+        addon3 ＝ 到文本 (N) ＋ “.[” ＋ sectoraddon ＋ “]” ＋ “--” ＋ rbd ＋ “--” ＋ “:” ＋ “.[” ＋ rbd3 ＋ “]”
+        addon3price ＝ rbd3
+
+    .默认
+        addon3 ＝ addon3 ＋ “;  ” ＋ 到文本 (N) ＋ “.[” ＋ sectoraddon ＋ “]” ＋ “--” ＋ rbd ＋ “--” ＋ “:” ＋ “.[” ＋ rbd3 ＋ “]”
+        addon3price ＝ addon3price ＋ “/” ＋ rbd3
+    .判断结束
+
+    N ＝ N ＋ 1
+    记录集1.到下一条 ()
+.计次循环尾 ()
+
+窗口1.透明标签7spaPRICE.字体.字体名称 ＝ “Comic Sans MS”
+窗口1.透明标签7spaPRICE.字体.字体大小 ＝ 12
+透明标签rbdcheck.文本颜色 ＝ #红色
+窗口1.透明标签7spaPRICE.文本颜色 ＝ #红色
+透明标签rbdcheck.标题 ＝ “Minimum Charge :  ” ＋ addon3
+窗口1.透明标签7spaPRICE.标题 ＝ addon3price
+
+
+
+
+.子程序 addon4SPA
+.局部变量 classaddon2, 文本型
+.局部变量 newdate, 整数型
+
+' sector ＝ 到文本 (编辑框1.内容)
+
+' 调试输出 (sector)
+' carrier ＝ 到文本 (取文本左边 (编辑框3.内容, 2))
+
+' classaddon2 ＝ 到文本 (编辑框4class.内容)
+
+' sector2 ＝ 取文本右边 (sector, 3) ＋ 取文本左边 (sector, 3)
+
+' newdate ＝ 编辑框5日期转换 ()
+
+' 记录集1.关闭 ()
+' 记录集1.置连接 (数据库连接1)
+' 记录集1.打开 (“SELECT * FROM addon4SPA where sectors=” ＋ “'” ＋ sector ＋ “'” ＋ “or sectors=” ＋ “'” ＋ sector2 ＋ “'”, #SQL语句, )
+
+
+
+
+
+
+
+
+
+
+.子程序 RBD检查, , 公开, 处理LH 系列的RBD是否为正确
+.局部变量 sparbd, 文本型
+.局部变量 primarycode, 文本型
+.局部变量 N, 整数型
+.局部变量 rbd, 文本型
+.局部变量 classRBD, 文本型
+.局部变量 tktrbd, 文本型
+.局部变量 labrbdcheck, 文本型
+.局部变量 I, 整数型
+.局部变量 LocationsFlights, 文本型
+
+透明标签rbdcheck.标题 ＝ “”
+primarycode ＝ 取文本左边 (编辑框8.内容, 1)
+classRBD ＝ 到文本 (编辑框4class.内容)
+记录集1.关闭 ()
+记录集1.置连接 (数据库连接1)
+记录集1.打开 (“SELECT * FROM rbdclassmap where tktrbd=” ＋ “'” ＋ classRBD ＋ “'”, #SQL语句, )
+记录集1.到首记录 ()
+记录集1.读文本 (“sparbd”, sparbd)
+调试输出 (sparbd)
+记录集1.关闭 ()
+记录集1.置连接 (数据库连接1)
+记录集1.打开 (“select cs from rbd where cs=” ＋ “'” ＋ carrier ＋ “'”, #SQL语句, )
+.判断开始 (记录集1.记录数量 ＞ 0)
+    调试输出 (记录集1.记录数量)
+    记录集1.关闭 ()
+    记录集1.置连接 (数据库连接1)
+    记录集1.打开 (“SELECT * FROM rbd where f=” ＋ “'” ＋ primarycode ＋ “'”, #SQL语句, )
+    .计次循环首 (记录集1.记录数量, N)
+        N ＝ N ＋ 1
+        记录集1.读文本 (“RBD”, rbd)
+        调试输出 (rbd)
+        .判断开始 (寻找文本 (classRBD, rbd, , 真) ≠ -1)
+            记录集2.置连接 (数据库连接1)
+            记录集2.打开 (“SELECT * FROM rbd where f=” ＋ “'” ＋ primarycode ＋ “'”, #SQL语句, )
+            .计次循环首 (记录集2.记录数量, I)
+                记录集2.读文本 (“rbd”, rbd)
+                记录集2.读文本 (“LocationsFlights”, LocationsFlights)
+                .判断开始 (I ＝ 1)
+                    labrbdcheck ＝ 到文本 (I) ＋ “.[” ＋ rbd ＋ “]” ＋ “:” ＋ LocationsFlights
+                .默认
+                    labrbdcheck ＝ labrbdcheck ＋ “;  ” ＋ 到文本 (I) ＋ “.[” ＋ rbd ＋ “]” ＋ “:” ＋ LocationsFlights
+                    调试输出 (labrbdcheck)
+                .判断结束
+
+                记录集2.到下一条 ()
+            .计次循环尾 ()
+            透明标签rbdcheck.文本颜色 ＝ #绿色
+            窗口1.透明标签7spaPRICE.文本颜色 ＝ #绿色
+            窗口1.透明标签7spaPRICE.字体.字体大小 ＝ 22
+            透明标签rbdcheck.标题 ＝ “RBD CHECK PASS!!  ” ＋ primarycode ＋ “-type for” ＋ “(” ＋ carrier ＋ “):” ＋ labrbdcheck
+            窗口1.透明标签7spaPRICE.标题 ＝ “PASS”
+
+
+        .默认
+            记录集2.置连接 (数据库连接1)
+            记录集2.打开 (“SELECT * FROM rbd where f=” ＋ “'” ＋ primarycode ＋ “'”, #SQL语句, )
+            .判断开始 (记录集2.记录数量 ＞ 0)
+                调试输出 (记录集2.记录数量)
+                .计次循环首 (记录集2.记录数量, I)
+                    记录集2.读文本 (“rbd”, rbd)
+                    记录集2.读文本 (“LocationsFlights”, LocationsFlights)
+                    .判断开始 (I ＝ 1)
+                        labrbdcheck ＝ 到文本 (I) ＋ “.[” ＋ rbd ＋ “]” ＋ “:” ＋ LocationsFlights
+                    .默认
+                        labrbdcheck ＝ labrbdcheck ＋ “;  ” ＋ 到文本 (I) ＋ “.[” ＋ rbd ＋ “]” ＋ “:” ＋ LocationsFlights
+                        调试输出 (labrbdcheck)
+                    .判断结束
+
+                    记录集2.到下一条 ()
+                .计次循环尾 ()
+                透明标签rbdcheck.文本颜色 ＝ #红色
+                窗口1.透明标签7spaPRICE.文本颜色 ＝ #红色
+                窗口1.透明标签7spaPRICE.字体.字体大小 ＝ 22
+                透明标签rbdcheck.标题 ＝ “RBD CHECK FAIL!!  ” ＋ primarycode ＋ “-type for” ＋ “(” ＋ carrier ＋ “):” ＋ labrbdcheck
+                窗口1.透明标签7spaPRICE.标题 ＝ “FAIL!”
+
+            .默认
+                透明标签rbdcheck.文本颜色 ＝ #红色
+                窗口1.透明标签7spaPRICE.文本颜色 ＝ #红色
+                窗口1.透明标签7spaPRICE.字体.字体大小 ＝ 22
+                透明标签rbdcheck.标题 ＝ “RBD Not Found!!”
+                窗口1.透明标签7spaPRICE.标题 ＝ “N/F!!”
+            .判断结束
+
+        .判断结束
+        记录集1.到下一条 ()
+    .计次循环尾 ()
+    记录集2.关闭 ()
+    记录集1.关闭 ()
+
+
+
+
+.默认
+    记录集1.关闭 ()
+    记录集1.置连接 (数据库连接1)
+    记录集1.打开 (“select cs from rbdclassmap where cs=” ＋ “'” ＋ carrier ＋ “'”, #SQL语句, )
+    .判断开始 (记录集1.记录数量 ＞ 0)
+        记录集1.关闭 ()
+        记录集1.置连接 (数据库连接1)
+        记录集1.打开 (“SELECT * FROM rbd where f=” ＋ “'” ＋ primarycode ＋ “'”, #SQL语句, )
+        调试输出 (记录集1.打开 (“SELECT * FROM rbd where f=” ＋ “'” ＋ primarycode ＋ “'”, #SQL语句, ))
+        .计次循环首 (记录集1.记录数量, N)
+            N ＝ N ＋ 1
+            记录集1.读文本 (“RBD”, rbd)
+            调试输出 (rbd)
+            .判断开始 (寻找文本 (sparbd, rbd, , 真) ≠ -1)
+                记录集2.置连接 (数据库连接1)
+                记录集2.打开 (“SELECT TKTRBD FROM rbdclassmap where sparbd=” ＋ “'” ＋ rbd ＋ “'”, #SQL语句, )
+                .计次循环首 (记录集2.记录数量, I)
+                    记录集2.读文本 (“TKTRBD”, tktrbd)
+                    记录集1.读文本 (“LocationsFlights”, LocationsFlights)
+                    .判断开始 (I ＝ 1)
+                        labrbdcheck ＝ 到文本 (I) ＋ “.[” ＋ tktrbd ＋ “]” ＋ “:” ＋ LocationsFlights
+                    .默认
+                        labrbdcheck ＝ labrbdcheck ＋ “;  ” ＋ 到文本 (I) ＋ “.[” ＋ tktrbd ＋ “]” ＋ “:” ＋ LocationsFlights
+                        调试输出 (labrbdcheck)
+                    .判断结束
+
+                    记录集2.到下一条 ()
+                .计次循环尾 ()
+                透明标签rbdcheck.文本颜色 ＝ #绿色
+                窗口1.透明标签7spaPRICE.文本颜色 ＝ #绿色
+                窗口1.透明标签7spaPRICE.字体.字体大小 ＝ 22
+                透明标签rbdcheck.标题 ＝ “RBD CHECK PASS!!  ” ＋ primarycode ＋ “-type for” ＋ “(” ＋ carrier ＋ “):” ＋ labrbdcheck
+                窗口1.透明标签7spaPRICE.标题 ＝ “PASS”
+
+            .默认
+                记录集2.置连接 (数据库连接1)
+                记录集2.打开 (“SELECT TKTRBD FROM rbdclassmap where sparbd=” ＋ “'” ＋ rbd ＋ “'”, #SQL语句, )
+                .判断开始 (记录集2.记录数量 ＞ 0)
+                    .计次循环首 (记录集2.记录数量, I)
+                        记录集2.读文本 (“TKTRBD”, tktrbd)
+                        记录集1.读文本 (“LocationsFlights”, LocationsFlights)
+                        .判断开始 (I ＝ 1)
+                            labrbdcheck ＝ 到文本 (I) ＋ “.[” ＋ tktrbd ＋ “]” ＋ “:” ＋ LocationsFlights
+                        .默认
+                            labrbdcheck ＝ labrbdcheck ＋ “;  ” ＋ 到文本 (I) ＋ “.[” ＋ tktrbd ＋ “]” ＋ “:” ＋ LocationsFlights
+                            调试输出 (labrbdcheck)
+                        .判断结束
+
+                        记录集2.到下一条 ()
+                    .计次循环尾 ()
+                    透明标签rbdcheck.文本颜色 ＝ #红色
+                    窗口1.透明标签7spaPRICE.文本颜色 ＝ #红色
+                    窗口1.透明标签7spaPRICE.字体.字体大小 ＝ 22
+                    透明标签rbdcheck.标题 ＝ “RBD CHECK FAIL!!  ” ＋ primarycode ＋ “-type for” ＋ “(” ＋ carrier ＋ “):” ＋ labrbdcheck
+                    窗口1.透明标签7spaPRICE.标题 ＝ “FAIL”
+
+                .默认
+                    透明标签rbdcheck.文本颜色 ＝ #红色
+                    窗口1.透明标签7spaPRICE.文本颜色 ＝ #红色
+                    窗口1.透明标签7spaPRICE.字体.字体大小 ＝ 22
+                    透明标签rbdcheck.标题 ＝ “RBD Not Found!!”
+                    窗口1.透明标签7spaPRICE.标题 ＝ “N/F!!”
+                .判断结束
+
+
+            .判断结束
+            记录集1.到下一条 ()
+        .计次循环尾 ()
+        记录集2.关闭 ()
+        记录集1.关闭 ()
+
+    .默认
+        透明标签rbdcheck.文本颜色 ＝ #红色
+        窗口1.透明标签7spaPRICE.文本颜色 ＝ #红色
+        窗口1.透明标签7spaPRICE.字体.字体大小 ＝ 22
+        透明标签rbdcheck.标题 ＝ “RBD Not Found!!”
+        窗口1.透明标签7spaPRICE.标题 ＝ “N/F!!”
+
+    .判断结束
+
+.判断结束
+
+
+
+
+
+.子程序 多机场匹配
+
+
+
+
+
+
+.子程序 errormessage
+
+透明标签7spaPRICE.字体.字体名称 ＝ “Calibri”
+透明标签7spaPRICE.字体.字体大小 ＝ 8
+透明标签7spaPRICE.标题 ＝ “Not Found!!1.Wrong Sector ? 2.Wrong SPA ?”
+
+窗口1.透明标签7spaPRICE.字体.字体名称 ＝ “Comic Sans MS”
+窗口1.透明标签7spaPRICE.字体.字体大小 ＝ 9
+窗口1.透明标签7spaPRICE.标题 ＝ “Not Found!!1.Wrong Sector ? 2.Wrong SPA ?”
+
+
+.子程序 _时钟1_周期事件, , , 10000毫秒是10秒，1分钟是60000
+.局部变量 当前时间, 整数型
+
+
+时钟1.时钟周期 ＝ 1800000
+当前时间 ＝ 取小时 (取现行时间 ())
+调试输出 (当前时间)
+.判断开始 (当前时间 ≤ 8 且 当前时间 ＜ 9)
+    ' _启动窗口.底图 ＝ #SHEEP
+    ' 窗口1.底图 ＝ #noteflower1
+    ' _启动窗口.底图 ＝ #theday
+    _启动窗口.底图 ＝ #ORG
+.判断 (当前时间 ＝ 9 且 当前时间 ＜ 10)
+    ' 载入 (窗口2, _启动窗口, 假)
+    ' 窗口1.底图 ＝ #noteflower2
+    _启动窗口.底图 ＝ #RING1
+.判断 (当前时间 ＝ 10 且 当前时间 ＜ 11)
+    ' 载入 (窗口2, _启动窗口, 假)
+    ' 窗口1.底图 ＝ #noteflower1
+    _启动窗口.底图 ＝ #SOFA1
+.判断 (当前时间 ＝ 11 且 当前时间 ＜ 12)
+    ' 载入 (窗口3, _启动窗口, 假)
+    ' 窗口1.底图 ＝ #noteflower2
+    _启动窗口.底图 ＝ #SNOW1
+.判断 (当前时间 ＝ 12 且 当前时间 ＜ 13)
+    ' 载入 (窗口2, _启动窗口, 假)
+    ' 窗口1.底图 ＝ #noteflower1
+    _启动窗口.底图 ＝ #ONBOOK1
+.判断 (当前时间 ＝ 13 且 当前时间 ＜ 14)
+    ' 载入 (窗口3, _启动窗口, 假)
+    ' _启动窗口.底图 ＝ #SHEEP
+    ' 窗口1.底图 ＝ #noteflower2
+    _启动窗口.底图 ＝ #CONNER1
+.判断 (当前时间 ＝ 14 且 当前时间 ＜ 15)
+    ' 载入 (窗口2, _启动窗口, 假)
+    ' 窗口1.底图 ＝ #noteflower1
+    _启动窗口.底图 ＝ #GREEN
+.判断 (当前时间 ＝ 15 且 当前时间 ＜ 16)
+    ' 载入 (窗口2, _启动窗口, 假)
+    ' 窗口1.底图 ＝ #noteflower2
+    _启动窗口.底图 ＝ #BAR1
+.判断 (当前时间 ≥ 16)
+    ' _启动窗口.底图 ＝ #SHEEP
+    ' 窗口1.底图 ＝ #noteflower1
+    ' 载入 (窗口3, _启动窗口, 假)
+    ' 载入 (窗口2, _启动窗口, 假)
+    _启动窗口.底图 ＝ #TV1
+.默认
+    _启动窗口.底图 ＝ #SHEEP
+    ' _启动窗口.底图 ＝ #TV1
+.判断结束
+
+
+
+
+.子程序 CHDINFSEARCH
+.局部变量 编辑框8后五位, 文本型
+.局部变量 N8, 整数型
+
+按钮1CHD.标题 ＝ “”
+按钮1INF.标题 ＝ “”
+.循环判断首 ()
+    N8 ＝ 寻找文本 (编辑框8.内容, #换行符, , 假)
+    编辑框8.内容 ＝ 子文本替换 (编辑框8.内容, #换行符, “”, N8, , 真)  ' 这部分是用来 删除如果是两张票 全选产生的换行符导致sector2 后半部分取不上后两个字母
+.循环判断尾 (N8 ≠ -1)
+编辑框8.内容 ＝ 删全部空 (编辑框8.内容)
+编辑框8后五位 ＝ 取文本右边 (编辑框8.内容, 5)
+
+.判断开始 (寻找文本 (编辑框8后五位, “CHD”, , 真) ≠ -1 或 寻找文本 (编辑框8后五位, “CH”, , 真) ≠ -1)
+    编辑框8.文本颜色 ＝ #红色
+    按钮1CHD.可视 ＝ 真
+    按钮1CHD.标题 ＝ “CHD:” ＋ CHD
+    按钮1CHD.禁止 ＝ 假
+    窗口1.透明标签1chd.可视 ＝ 真
+
+.默认
+    按钮1CHD.可视 ＝ 假
+    窗口1.透明标签1chd.可视 ＝ 假
+    编辑框8.文本颜色 ＝ #黑色
+.判断结束
+
+
+
+.判断开始 (寻找文本 (编辑框8后五位, “INF”, , 真) ≠ -1 或 寻找文本 (编辑框8后五位, “IN”, , 真) ≠ -1)
+    编辑框8.文本颜色 ＝ #红色
+    窗口1.透明标签1INF.可视 ＝ 真
+    按钮1INF.可视 ＝ 真
+    按钮1INF.标题 ＝ “INF:” ＋ INF
+    按钮1INF.禁止 ＝ 假
+
+.默认
+    按钮1INF.可视 ＝ 假
+    窗口1.透明标签1INF.可视 ＝ 假
+.判断结束
+
+
+编辑框7statu.内容 ＝ 删全部空 (编辑框7statu.内容)
+.判断开始 (寻找文本 (编辑框7statu.内容, “NS”, , 真) ≠ -1 或 寻找文本 (编辑框7statu.内容, “N/S”, , 真) ≠ -1)
+    编辑框7statu.文本颜色 ＝ #红色
+    编辑框8.文本颜色 ＝ #红色
+    按钮1INF.可视 ＝ 真
+    窗口1.透明标签1INF.可视 ＝ 真
+    按钮1INF.标题 ＝ “INF:” ＋ INF
+    按钮1INF.禁止 ＝ 假
+
+.默认
+    编辑框7statu.文本颜色 ＝ #黑色
+.判断结束
+
+
+
+
+
+.子程序 INIREADER
+
+
+
+.子程序 _时钟2_周期事件
+
+
+
+.子程序 _按钮Fly_被单击
+.局部变量 日期, 文本型
+.局部变量 flightstats地址, 文本型
+.局部变量 FLIGHTSTATS日期, 文本型
+
+' 日期 ＝ 到文本 (编辑框5日期转换 ())
+' FLIGHTSTATS日期 ＝ 取文本左边 (日期, 4) ＋ “-” ＋ 取文本中间 (日期, 5, 2) ＋ “-” ＋ 取文本右边 (日期, 2)
+' ' FLIGHTSTATS日期 ＝ 取文本右边 (日期, 2) ＋ “-” ＋ 取文本中间 (日期, 5, 2) ＋ “-” ＋ 取文本左边 (日期, 4)  ' 欧洲日期格式 只是测试
+' flightstats地址 ＝ “C:\Program Files\Internet Explorer\IEXPLORE.EXE http://www.flightstats.com/go/FlightStatus/flightStatusByFlight.do?airline=” ＋ 编辑框3.内容 ＋ “&departureDate=” ＋ FLIGHTSTATS日期
+' 运行 (flightstats地址, 假, )
+
