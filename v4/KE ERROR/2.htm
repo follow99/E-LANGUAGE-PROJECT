@@ -1,0 +1,562 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head id="Head1"><title>
+
+</title>
+    <style type="text/css">
+        a, a:visited
+        {
+            text-decoration: none;
+            color: Blue;
+        }
+        input, select, option
+        {
+            font-family: Verdana, Tahoma, Arial;
+            font-size: 11px;
+            color: Navy;
+        }
+        .bodyClass
+        {
+            font-family: Verdana, Tahoma, Arial;
+            font-size: 11px;
+            color: Navy;
+        }
+        .criteriaContainerClass
+        {
+            border: solid 1px Tan;
+            width: 800px;
+            background-color: #FFFBD6;
+            margin-bottom: 5px;
+        }
+        .criteriaClass
+        {
+        	margin: 3px;
+        }
+        .ticketContainerClass
+        {
+            border: solid 1px Black;
+            width: 800px;
+        }
+        .ticketContainerClass .hd1
+        {
+            vertical-align: top;
+            font-size: 60%;
+            padding-bottom: 1px;
+        }
+        .ticketContainerClass .cn1
+        {
+            vertical-align: top;
+            min-height: 14px;
+            padding-bottom: 1px;
+        }
+        
+        .updateProgress-style
+        {
+	        width: 300px;
+	        background-color: #FFC080;
+	        left: 5px;
+	        bottom: 5px;
+	        position: fixed;
+        	
+        }
+                
+        @media print
+        {
+            body
+            {
+                color: Black;
+            }
+            .hidden
+            {
+                display: none;
+            }
+        }
+    </style>
+<link href="../../../App_Themes/easiTheme/easiStyleSheet.css" type="text/css" rel="stylesheet" /></head>
+<body class="bodyClass">
+    <form name="form1" method="post" action="ViewTicket.aspx?tkt=1806562070961" id="form1">
+<div>
+<input type="hidden" name="__EVENTTARGET" id="__EVENTTARGET" value="" />
+<input type="hidden" name="__EVENTARGUMENT" id="__EVENTARGUMENT" value="" />
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="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" />
+</div>
+
+<script type="text/javascript">
+//<![CDATA[
+var theForm = document.forms['form1'];
+if (!theForm) {
+    theForm = document.form1;
+}
+function __doPostBack(eventTarget, eventArgument) {
+    if (!theForm.onsubmit || (theForm.onsubmit() != false)) {
+        theForm.__EVENTTARGET.value = eventTarget;
+        theForm.__EVENTARGUMENT.value = eventArgument;
+        theForm.submit();
+    }
+}
+//]]>
+</script>
+
+
+<script src="/WebResource.axd?d=8Twm51WoEq1cSOkyVczUK409Dmo3VQib1E8QlnMspWe7kEGLN_aXdHNpmw7FdnzQiHy9ipVDnvxz-YZkG3l9uNIbNQ81&amp;t=635522414514062500" type="text/javascript"></script>
+
+
+<script src="/ScriptResource.axd?d=IQrCJgjVQCIHnS4oFYbz5yBlyl0eEGkj8ReslcrQnCQk7QjS8NxYyxpQ--WPCLreZf_j0jC-jyjxb1nICGySgkXkHnx9JqSZk2addgJnHlOtTjML1xmx94iP-zsckGZ0xgiERaCq_0Tmstsi_ub5632qbaQ1&amp;t=4abbd04a" type="text/javascript"></script>
+<script src="/ScriptResource.axd?d=n0Vru6L_6mrz3eGOEHl8t9ObY0FI2WqwCbZ7meB3ZT6IdS1g6c0EG5U-QVcbhzLrYNLn2g2dGzURlLFUa_jHCZzaYxxw0WiRmypzNgY4aofnANdxNF0rFJb1PPQdTeX6ABGToREB9zci5fZ-W5CdESII4NZjiGRvdYRXRLl-Zl6tc-WK0&amp;t=4abbd04a" type="text/javascript"></script>
+<div>
+
+	<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="ADAEF935" />
+	<input type="hidden" name="__VIEWSTATEENCRYPTED" id="__VIEWSTATEENCRYPTED" value="" />
+	<input type="hidden" name="__EVENTVALIDATION" id="__EVENTVALIDATION" value="aZSwWaGcJ6V0jXfPLna8mky4uWAtQFrbFPj+kHVWd5Hj+UOGm5x30tGBLNlkRd5WQjq8mBmOLQSEaMvyT79mZG84f0M=" />
+</div>
+        <div class="hidden" style="margin: 0 auto; text-align:center;">
+            <a href="javascript: void(0);" onclick="javascript: window.print();" style="padding:0px 10px 0px 10px;" title="Print Rejection">Print</a>
+            <a href="javascript: void(0);" onclick="javascript: window.close();" style="padding:0px 10px 0px 10px;" title="Close Window">Close</a>
+        </div>
+        <div style="font-weight: bold; font-size: 120%; margin-bottom: 10px;" class="hidden">
+            View Ticket
+        </div>
+        <script type="text/javascript">
+//<![CDATA[
+Sys.WebForms.PageRequestManager._initialize('ScriptManager1', document.getElementById('form1'));
+Sys.WebForms.PageRequestManager.getInstance()._updateControls(['tUpdatePanel1'], [], [], 90);
+//]]>
+</script>
+
+        <div id="UpdatePanel1">
+	
+                
+                <div class="ticketContainerClass">
+                    <table cellspacing="0" cellpadding="0" border="0" id="fvwTicket" style="width:100%;border-collapse:collapse;">
+		<tr>
+			<td colspan="2">
+                            <div>
+                                <input type="hidden" name="fvwTicket$hidPrimaryTicketNumber" id="fvwTicket_hidPrimaryTicketNumber" value="1806562070961" />
+                            </div>
+                            <div>
+                                <table cellpadding="0" cellspacing="0" style="width: 100%;">
+                                    <tr>
+                                        <td colspan="2">
+                                            <table cellpadding="0" cellspacing="0" style="width: 100%;">
+                                                <tr>
+                                                    <td class="hd1" style="border-right: solid 1px black;">
+                                                        ISSUED BY</td>
+                                                    <td class="hd1" colspan="2" style="border-right: solid 1px black;">
+                                                        CONJUNCTION TICKETS</td>
+                                                    <td class="hd1">
+                                                        PLACE OF ISSUE</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="cn1" style="border-right: solid 1px black;">
+                                                        
+                                                    </td>
+                                                    <td class="cn1" colspan="2" style="border-right: solid 1px black;">
+                                                        <span id="fvwTicket_lblConjunctionTickets"></span><br />
+                                                    </td>
+                                                    <td class="cn1" rowspan="3">
+                                                        -/91204864
+                                                        <br />
+                                                        -
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="hd1" style="border-top: solid 1px black; border-right: solid 1px black;">
+                                                        ENDORSEMENTS/RESTRICTIONS</td>
+                                                    <td class="hd1" colspan="2" style="border-top: solid 1px black; border-right: solid 1px black;">
+                                                        PASSENGER TICKET AND BAGGAGE CHECK</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="cn1" style="border-right: solid 1px black;">
+                                                        RISS CHRG APPLY.RFND PNTY APPLY.NONENDS.
+                                                    </td>
+                                                    <td class="cn1" colspan="2" style="border-right: solid 1px black;">
+                                                        -</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="hd1" style="border-top: solid 1px black; border-right: solid 1px black;">
+                                                        NAME OF PASSENGER</td>
+                                                    <td class="hd1" style="border-top: solid 1px black; border-right: solid 1px black;">
+                                                        DATE OF ISSUE</td>
+                                                    <td class="hd1" style="border-top: solid 1px black; border-right: solid 1px black;">
+                                                        ORIGIN/DESINATION</td>
+                                                    <td class="hd1" style="border-top: solid 1px black;">
+                                                        AIRLINE DATA</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="cn1" style="border-right: solid 1px black;">
+                                                        AN/HO JUNG
+                                                    </td>
+                                                    <td class="cn1" style="width: 115px; border-right: solid 1px black;">
+                                                        09-Jan-15
+                                                    </td>
+                                                    <td class="cn1" style="width: 115px; border-right: solid 1px black;">
+                                                        -
+                                                    </td>
+                                                    <td class="cn1" style="width: 150px">
+                                                        180
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border-top: solid 1px black;">
+                                            <div>
+				<table cellspacing="0" cellpadding="0" border="0" id="fvwTicket_gvwETicketCoupons" style="width:100%;border-collapse:collapse;">
+					<tr>
+						<td>
+                                                            <div style="text-align: center;">
+                                                                -- <span id="fvwTicket_gvwETicketCoupons_ctl02_lblTicketNumber">1806562070961</span> --
+                                                            </div>
+                                                            <div style="border-top: solid 1px black; border-bottom: solid 1px black;">
+                                                                
+                                                                        <table id="fvwTicket_gvwETicketCoupons_ctl02_rptCoupons_ctl00_Table1" cellpadding="0" cellspacing="0" style="width: 100%;">
+							<tr class="hd1" style="vertical-align: top;">
+								<td style="width: 20px; text-align: center;">
+                                                                                    O/X</td>
+								<td style="width: 115px; border-left: solid 1px black;">
+                                                                                    FROM/TO</td>
+								<td style="width: 75px; border-left: solid 1px black;">
+                                                                                    CARRIER/FLIGHT</td>
+								<td style="width: 30px; border-left: solid 1px black;">
+                                                                                    CLASS</td>
+								<td style="width: 75px; border-left: solid 1px black;">
+                                                                                    DATE</td>
+								<td style="width: 45px; border-left: solid 1px black;">
+                                                                                    TIME</td>
+								<td style="width: 35px; border-left: solid 1px black;">
+                                                                                    STATUS</td>
+								<td style="width: 150px; border-left: solid 1px black;">
+                                                                                    FARE/BASIS/TKT DESIGNATOR</td>
+								<td style="width: 85px; border-left: solid 1px black;">
+                                                                                    NOT VALID BEFORE</td>
+								<td style="width: 85px; border-left: solid 1px black;">
+                                                                                    NOT VALID AFTER</td>
+								<td style="width: 35px; border-left: solid 1px black;">
+                                                                                    ALLOW</td>
+								<td style="border-left: solid 1px black;">
+                                                                                    FCS
+                                                                                </td>
+							</tr>
+						</table>
+						
+                                                                    
+                                                                        <table id="fvwTicket_gvwETicketCoupons_ctl02_rptCoupons_ctl01_Table2" cellpadding="0" cellspacing="0" style="width: 100%;">
+							<tr id="fvwTicket_gvwETicketCoupons_ctl02_rptCoupons_ctl01_trOrder" class="cn1" style="vertical-align: top; text-align: center;">
+								<td style="width: 20px;">
+                                                                                    O
+                                                                                </td>
+								<td style="width: 115px; border-left: black 1px solid; font-family: Courier New;
+                                                                                    font-size: 110%">
+                                                                                    ICNCAN
+                                                                                </td>
+								<td style="width: 75px; border-left: black 1px solid;">
+                                                                                    KE 5815
+                                                                                </td>
+								<td style="width: 30px; border-left: black 1px solid;">
+                                                                                    B
+                                                                                </td>
+								<td style="border-left: black 1px solid; width: 75px">
+                                                                                    23JAN
+                                                                                </td>
+								<td style="border-left: black 1px solid; width: 45px">
+                                                                                    -
+                                                                                </td>
+								<td style="border-left: black 1px solid; width: 35px">
+                                                                                    OK
+                                                                                </td>
+								<td style="width: 150px; border-left: black 1px solid;">
+                                                                                    MHEKC
+                                                                                </td>
+								<td style="border-left: black 1px solid; width: 85px">
+                                                                                    -
+                                                                                </td>
+								<td style="border-left: black 1px solid; width: 85px">
+                                                                                    -
+                                                                                </td>
+								<td style="width: 35px; border-left: black 1px solid">
+                                                                                    -
+                                                                                </td>
+								<td style="border-left: black 1px solid;">
+                                                                                    -
+                                                                                </td>
+							</tr>
+						</table>
+						
+                                                                    
+                                                                        <table id="fvwTicket_gvwETicketCoupons_ctl02_rptCoupons_ctl02_Table2" cellpadding="0" cellspacing="0" style="width: 100%;">
+							<tr id="fvwTicket_gvwETicketCoupons_ctl02_rptCoupons_ctl02_trOrder" class="cn1" style="vertical-align: top; text-align: center;">
+								<td style="width: 20px;">
+                                                                                    O
+                                                                                </td>
+								<td style="width: 115px; border-left: black 1px solid; font-family: Courier New;
+                                                                                    font-size: 110%">
+                                                                                    CANICN
+                                                                                </td>
+								<td style="width: 75px; border-left: black 1px solid;">
+                                                                                    KE 5826
+                                                                                </td>
+								<td style="width: 30px; border-left: black 1px solid;">
+                                                                                    B
+                                                                                </td>
+								<td style="border-left: black 1px solid; width: 75px">
+                                                                                    25JAN
+                                                                                </td>
+								<td style="border-left: black 1px solid; width: 45px">
+                                                                                    -
+                                                                                </td>
+								<td style="border-left: black 1px solid; width: 35px">
+                                                                                    OK
+                                                                                </td>
+								<td style="width: 150px; border-left: black 1px solid;">
+                                                                                    MHEKC
+                                                                                </td>
+								<td style="border-left: black 1px solid; width: 85px">
+                                                                                    -
+                                                                                </td>
+								<td style="border-left: black 1px solid; width: 85px">
+                                                                                    -
+                                                                                </td>
+								<td style="width: 35px; border-left: black 1px solid">
+                                                                                    -
+                                                                                </td>
+								<td style="border-left: black 1px solid;">
+                                                                                    -
+                                                                                </td>
+							</tr>
+						</table>
+						
+                                                                    
+                                                                        <table id="fvwTicket_gvwETicketCoupons_ctl02_rptCoupons_ctl03_Table2" cellpadding="0" cellspacing="0" style="width: 100%;">
+							<tr id="fvwTicket_gvwETicketCoupons_ctl02_rptCoupons_ctl03_trOrder" class="cn1" style="vertical-align: top; text-align: center;">
+								<td style="width: 20px;">
+                                                                                    <br/>
+                                                                                </td>
+								<td style="width: 115px; border-left: black 1px solid; font-family: Courier New;
+                                                                                    font-size: 110%">
+                                                                                    --
+                                                                                </td>
+								<td style="width: 75px; border-left: black 1px solid;">
+                                                                                    - -
+                                                                                </td>
+								<td style="width: 30px; border-left: black 1px solid;">
+                                                                                    -
+                                                                                </td>
+								<td style="border-left: black 1px solid; width: 75px">
+                                                                                    -
+                                                                                </td>
+								<td style="border-left: black 1px solid; width: 45px">
+                                                                                    -
+                                                                                </td>
+								<td style="border-left: black 1px solid; width: 35px">
+                                                                                    -
+                                                                                </td>
+								<td style="width: 150px; border-left: black 1px solid;">
+                                                                                    -
+                                                                                </td>
+								<td style="border-left: black 1px solid; width: 85px">
+                                                                                    -
+                                                                                </td>
+								<td style="border-left: black 1px solid; width: 85px">
+                                                                                    -
+                                                                                </td>
+								<td style="width: 35px; border-left: black 1px solid">
+                                                                                    -
+                                                                                </td>
+								<td style="border-left: black 1px solid;">
+                                                                                    -
+                                                                                </td>
+							</tr>
+						</table>
+						
+                                                                    
+                                                                        <table id="fvwTicket_gvwETicketCoupons_ctl02_rptCoupons_ctl04_Table2" cellpadding="0" cellspacing="0" style="width: 100%;">
+							<tr id="fvwTicket_gvwETicketCoupons_ctl02_rptCoupons_ctl04_trOrder" class="cn1" style="vertical-align: top; text-align: center;">
+								<td style="width: 20px;">
+                                                                                    <br/>
+                                                                                </td>
+								<td style="width: 115px; border-left: black 1px solid; font-family: Courier New;
+                                                                                    font-size: 110%">
+                                                                                    --
+                                                                                </td>
+								<td style="width: 75px; border-left: black 1px solid;">
+                                                                                    - -
+                                                                                </td>
+								<td style="width: 30px; border-left: black 1px solid;">
+                                                                                    -
+                                                                                </td>
+								<td style="border-left: black 1px solid; width: 75px">
+                                                                                    -
+                                                                                </td>
+								<td style="border-left: black 1px solid; width: 45px">
+                                                                                    -
+                                                                                </td>
+								<td style="border-left: black 1px solid; width: 35px">
+                                                                                    -
+                                                                                </td>
+								<td style="width: 150px; border-left: black 1px solid;">
+                                                                                    -
+                                                                                </td>
+								<td style="border-left: black 1px solid; width: 85px">
+                                                                                    -
+                                                                                </td>
+								<td style="border-left: black 1px solid; width: 85px">
+                                                                                    -
+                                                                                </td>
+								<td style="width: 35px; border-left: black 1px solid">
+                                                                                    -
+                                                                                </td>
+								<td style="border-left: black 1px solid;">
+                                                                                    -
+                                                                                </td>
+							</tr>
+						</table>
+						
+                                                                    
+                                                                
+                                                            </div>
+                                                        </td>
+					</tr>
+				</table>
+			</div>
+                                            
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2">
+                                            <table border="0" cellpadding="0" cellspacing="0" style="width: 100%;">
+                                                <tr>
+                                                    <td class="hd1" style="width: 100px; border-right: solid 1px black;">
+                                                        FARE
+                                                    </td>
+                                                    <td class="hd1">
+                                                        FARE CALCULATION
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="cn1" style="border-right: solid 1px black; border-bottom: solid 1px black;">
+                                                        KRW620,000.00
+                                                    </td>
+                                                    <td class="cn1" rowspan="5">
+                                                        SEL KE CAN278.80KE SEL278.80NUC557.60END ROE1111.9
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="hd1" style="border-right: solid 1px black;">
+                                                        EQUIV. FARE</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="cn1" style="border-right: solid 1px black; border-bottom: solid 1px black;">
+                                                        GBP362.00
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="hd1" style="border-right: solid 1px black;">
+                                                        TOTAL FARE</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="cn1" style="border-right: solid 1px black; border-bottom: solid 1px black;">
+                                                        GBP620,047.00
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="hd1" colspan="2" style="border-top: solid 1px black;">
+                                                        TAXES</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="cn1" colspan="2">
+                                                        GBP 21.80 YR, GBP 16.30 BP, GBP 9.30 CN
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2" style="border-top: solid 1px black;">
+                                            <table border="0" cellpadding="0" cellspacing="0" style="width: 100%;">
+                                                <tr style="vertical-align: top;">
+                                                    <td class="hd1" style="width: 500px;">
+                                                        FORM OF PAYMENT</td>
+                                                    <td class="hd1" style="width: 70px; border-left: solid 1px black;">
+                                                        APPROVAL CODE</td>
+                                                    <td class="hd1" style="border-left: solid 1px black;">
+                                                        TOUR CODE</td>
+                                                </tr>
+                                                <tr style="vertical-align: top; font-size: 10px;">
+                                                    <td class="cn1">
+                                                        <br/>
+                                                    </td>
+                                                    <td class="cn1" style="width: 100px; border-left: solid 1px black;">
+                                                        <br/>
+                                                    </td>
+                                                    <td class="cn1" style="width: 100px; border-left: solid 1px black;">
+                                                        <br/>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2" style="border-top: solid 1px black;">
+                                            <table align="center" cellpadding="0" cellspacing="0">
+                                                <tr>
+                                                    <td class="hd1" style="width: 50px">
+                                                        CPN</td>
+                                                    <td class="hd1" style="width: 60px">
+                                                        AIRLINE CODE</td>
+                                                    <td class="hd1" style="width: 150px">
+                                                        FORM/SERIAL NUMBER</td>
+                                                    <td class="hd1" style="width: 50px">
+                                                        CK</td>
+                                                </tr>
+                                                <tr style="font-size: 14px;">
+                                                    <td class="cn1" style="width: 50px">
+                                                        -
+                                                    </td>
+                                                    <td class="cn1" style="width: 60px">
+                                                        180
+                                                    </td>
+                                                    <td class="cn1" style="width: 150px">
+                                                        6562070961
+                                                    </td>
+                                                    <td class="cn1" style="width: 50px">
+                                                        -
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </td>
+		</tr>
+	</table>
+                    
+                </div>
+            
+</div>
+        <div id="UpdateProgress1" style="display:none;">
+	
+                <div class="updateProgress-style">
+                    <div style="padding: 2px; border: solid 1px grey;">
+                        <img src="../../../Images/ajax-loader.gif" align="middle" alt="loading" />Please
+                        wait...
+                    </div>
+                </div>
+            
+</div>
+    
+
+<script type="text/javascript">
+//<![CDATA[
+Sys.Application.initialize();
+Sys.Application.add_init(function() {
+    $create(Sys.UI._UpdateProgress, {"associatedUpdatePanelId":null,"displayAfter":500,"dynamicLayout":true}, null, null, $get("UpdateProgress1"));
+});
+//]]>
+</script>
+</form>
+</body>
+</html>
